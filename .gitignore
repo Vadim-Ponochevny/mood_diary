@@ -1,19 +1,24 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration
 local.properties
 
-# Project exclude paths
-/app/
-/gradle/
+# IntelliJ / Android Studio
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+
+# NDK / CMake
+.cxx/
+externalNativeBuild/
+
+# Captures
+captures/
+
+# Exclude generated files but keep source
+app/build/git rm --cached -r

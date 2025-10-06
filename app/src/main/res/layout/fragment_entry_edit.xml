@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="top">
+
+        <TextView
+            android:id="@+id/labelEmotions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Как вы себя чувствуете?"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:id="@+id/moodSelector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:weightSum="4"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnHappy"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:backgroundTint="#BFD7D4"
+                android:text="😊"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/btnNeutral"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="18dp"
+                android:layout_weight="1"
+                android:backgroundTint="#BFD7D4"
+                android:text="😐"
+                android:textSize="24sp" />
+            <Button
+                android:id="@+id/btnSad"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="18dp"
+                android:layout_weight="1"
+                android:backgroundTint="#BFD7D4"
+                android:text="😢"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/btnAngry"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="18dp"
+                android:layout_weight="1"
+                android:text="😡"
+                android:backgroundTint="#BFD7D4"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/labelDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Опишитие ваши эмоции"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/descriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Что у вас на душе?"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:gravity="top|start"
+            android:background="@drawable/rounded_edittext" />
+
+        <TextView
+            android:id="@+id/labelData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Дата, время"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/dateEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Дата"
+            android:focusable="false"
+            android:clickable="true"
+            android:inputType="none"
+            android:background="@drawable/rounded_edittext"
+            android:drawableEnd="@android:drawable/ic_menu_today"
+            android:padding="12dp"
+            android:textSize="16sp"/>
+
+        <EditText
+            android:id="@+id/timeEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Время"
+            android:focusable="false"
+            android:clickable="true"
+            android:inputType="none"
+            android:background="@drawable/rounded_edittext"
+            android:drawableEnd="@android:drawable/ic_lock_idle_alarm"
+            android:padding="12dp"
+            android:textSize="16sp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="66dp"
+            android:layout_marginTop="24dp"
+            android:text="Сохранить"
+            app:cornerRadius="26dp"
+            style="@style/Widget.MaterialComponents.Button"/>
+    </LinearLayout>
+</ScrollView>
