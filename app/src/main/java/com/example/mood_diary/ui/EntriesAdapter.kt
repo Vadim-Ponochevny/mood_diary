@@ -1,11 +1,12 @@
-package com.example.mood_diary
+package com.example.mood_diary.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mood_diary.EntriesAdapter.ViewHolder
+import com.example.mood_diary.R
+import com.example.mood_diary.ui.EntriesAdapter.ViewHolder
 import com.example.mood_diary.data.model.Entry
 import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.ItemMoodEntryBinding

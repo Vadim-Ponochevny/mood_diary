@@ -1,6 +1,8 @@
 package com.example.mood_diary.domain
 
 import com.example.mood_diary.data.model.Entry
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface EntryRepository {
 
@@ -8,5 +10,5 @@ interface EntryRepository {
 
     suspend fun deleteEntryDatabase (entry: Entry)
 
-    fun getAllEntries ()
+    fun getAllEntries () : Flow<List<Entry>>
 }
