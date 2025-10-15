@@ -5,61 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/emojiRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="wrap_content"
             android:padding="8dp"
             android:clipToPadding="false"
             android:overScrollMode="never"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/searchBarContainer"
-        android:layout_width="match_parent"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addEntryButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="16dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <EditText
-            android:id="@+id/searchEditText"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:hint="Поиск..."
-            android:inputType="text"
-            android:imeOptions="actionSearch"
-            android:background="@drawable/rounded_search"
-            android:drawableStart="@android:drawable/ic_menu_search"
-            android:drawablePadding="8dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:textSize="16sp"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/searchActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_icon"
-            app:tint="@android:color/white"
-            android:layout_marginStart="18dp"
-            android:contentDescription="add"
-            app:backgroundTint="@color/colorPrimary"
-            app:maxImageSize="32dp"
-            app:shapeAppearanceOverlay="@style/FabShape"/>
-    </LinearLayout>
+        android:src="@drawable/ic_add_icon"
+        app:tint="@android:color/white"
+        android:layout_marginStart="18dp"
+        android:contentDescription="add"
+        app:backgroundTint="@color/colorPrimary"
+        app:maxImageSize="32dp"
+        app:shapeAppearanceOverlay="@style/FabShape"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

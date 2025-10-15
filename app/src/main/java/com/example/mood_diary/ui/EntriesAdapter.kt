@@ -1,5 +1,6 @@
 package com.example.mood_diary.ui
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -27,6 +28,7 @@ class EntriesAdapter() : ListAdapter<Entry, ViewHolder>(EntryDiffCallback()) {
             binding.tvMoodEmoji.text = item.mood.emoji
             binding.tvMoodTeg.text = item.teg
             binding.tvMoodDateTime.text = dateTimeText
+            Log.d("fromAdapter", "$item")
 
             val color = when(item.mood) {
                 Mood.SAD -> R.color.sad
@@ -63,7 +65,7 @@ class EntryDiffCallback : DiffUtil.ItemCallback<Entry>() {
         oldItemPosition: Entry,
         newItemPosition: Entry
     ): Boolean {
-        return oldItemPosition == newItemPosition
+        return oldItemPosition.id == newItemPosition.id
     }
 
     override fun areContentsTheSame(

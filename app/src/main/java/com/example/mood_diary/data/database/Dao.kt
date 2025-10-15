@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.mood_diary.data.model.Entry
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface Dao {
@@ -15,5 +16,5 @@ interface Dao {
     suspend fun deleteEntryDatabase (entry: Entry)
 
     @Query("SELECT * FROM entries")
-    fun getAllEntries ()
+    fun getAllEntries () : Flow<List<Entry>>
 }

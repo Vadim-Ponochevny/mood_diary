@@ -8,4 +8,6 @@
     <string name="mood_neutral">Нейтрально</string>
     <string name="mood_happy">Радостно</string>
     <string name="mood_angry">Разгенванно</string>
+
+    <string name="search_title">Поиск</string>
 </resources>

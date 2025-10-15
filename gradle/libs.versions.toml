@@ -1,5 +1,6 @@
 [versions]
 agp = "8.10.1"
+hiltAndroid = "2.57.1"
 kotlin = "2.0.21"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -22,6 +23,8 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-navigation-testing = { module = "androidx.navigation:navigation-testing", version.ref = "navigationFragmentKtx" }
 androidx-navigation-dynamic-features-fragment = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigationFragmentKtx" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
@@ -41,4 +44,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt"}
+dagger-hilt = {id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid"}
 

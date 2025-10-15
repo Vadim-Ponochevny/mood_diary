@@ -1,24 +1,51 @@
 package com.example.mood_diary.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mood_diary.data.model.Entry
 import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.domain.EntryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalTime
 
-class EntriesViewModel(
+@HiltViewModel
+class EntriesViewModel @Inject constructor(
     private val repository: EntryRepository
 ) : ViewModel(), IntentAware<EntriesViewModel.ViewState.Intents> {
+
+    init {
+        viewModelScope.launch {
+            insertTestEntriesOnce()
+        }
+    }
+
+    private suspend fun insertTestEntriesOnce() {
+        val current = repository.getAllEntries().firstOrNull()
+        if (current.isNullOrEmpty()) {
+            val test = Entry(
+                    id = 0,
+                    des = "Тестовая запись 1",
+                    teg = "тег1",
+                    mood = Mood.HAPPY,
+                    date = LocalDate.now(),
+                    time = LocalTime.now()
+                )
+            repository.upsertEntryDatabase(test)
+        }
+    }
 
     data class ViewState(
         val isLoading: Boolean = false,
         val isError: Boolean = false,
         val entries: List<Entry> = emptyList(),
-        val filteredEntries: List<Entry> = emptyList(),
+//        val filteredEntries: List<Entry> = emptyList(),
         val searchQuery: String = "",
         val filterType: MoodFilterType = MoodFilterType.ALL,
     ) {
@@ -48,12 +75,12 @@ class EntriesViewModel(
     private val refreshListener = MutableSharedFlow<ViewState.StateTriggers>()
 
     val entriesState: Flow<ViewState> = flow {
-        emit(loadInitialEntries())
+        emit(updateCurrentEntries())
         refreshListener.collect { trigger ->
             when (trigger) {
                 ViewState.StateTriggers.LoadEntries -> {
                     emit(currentState.copy(isLoading = true))
-                    emit(updateEntries())
+                    emit(updateCurrentEntries())
                 }
                 is ViewState.StateTriggers.SearchChanged -> {
                     val newState = currentState.copy(searchQuery = trigger.query)
@@ -65,7 +92,7 @@ class EntriesViewModel(
                 }
                 is ViewState.StateTriggers.DeleteEntry -> {
                     deleteEntry(trigger.entry)
-                    emit(updateEntries())
+                    emit(updateCurrentEntries())
                 }
                 ViewState.StateTriggers.ClearFilters -> {
                     val clearedState = currentState.copy(
@@ -84,23 +111,24 @@ class EntriesViewModel(
             currentState
         )
 
-    private suspend fun loadInitialEntries(): ViewState {
-        return try {
-            val entries = repository.getAllEntries().first()
-            ViewState(
-                isLoading = false,
-                isError = false,
-                entries = entries,
-                filteredEntries = entries
-            )
-        } catch (e: Exception) {
-            ViewState(isLoading = false, isError = true)
-        }
-    }
+//    private suspend fun loadInitialEntries(): ViewState {
+//        return try {
+//            val entries = repository.getAllEntries().first()
+//            ViewState(
+//                isLoading = false,
+//                isError = false,
+//                entries = entries,
+//                filteredEntries = entries
+//            )
+//        } catch (e: Exception) {
+//            ViewState(isLoading = false, isError = true)
+//        }
+//    }
 
-    private suspend fun updateEntries(): ViewState {
+    private suspend fun updateCurrentEntries(): ViewState {
         return try {
             val entries = repository.getAllEntries().first()
+            Log.d("entriesState", "$entries")
             currentState.copy(
                 isLoading = false,
                 isError = false,
@@ -144,7 +172,7 @@ class EntriesViewModel(
         }
 
         return state.copy(
-            filteredEntries = result,
+            entries = result,
             isLoading = false,
             isError = false
         )

@@ -9,7 +9,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.appbar.MaterialToolbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,11 +19,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setupSystemBarsPadding()
 
+        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
+        setSupportActionBar(toolbar)
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         val navController = navHostFragment.navController
         val appBarConfiguration = AppBarConfiguration(navController.graph)
-        findViewById<MaterialToolbar>(R.id.topAppBar).setupWithNavController(navController, appBarConfiguration)
+        toolbar.setupWithNavController(navController, appBarConfiguration)
 
     }
     private fun setupSystemBarsPadding() {

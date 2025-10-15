@@ -3,8 +3,10 @@ package com.example.mood_diary.data.repository
 import com.example.mood_diary.data.database.Dao
 import com.example.mood_diary.data.model.Entry
 import com.example.mood_diary.domain.EntryRepository
+import jakarta.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
-class EntryRepositoryImpl (
+class EntryRepositoryImpl  @Inject constructor(
     private val dao: Dao
 ) : EntryRepository {
 
@@ -16,7 +18,7 @@ class EntryRepositoryImpl (
         return dao.deleteEntryDatabase(entry)
     }
 
-    override fun getAllEntries() {
+    override fun getAllEntries() : Flow<List<Entry>> {
         return dao.getAllEntries()
     }
 }
