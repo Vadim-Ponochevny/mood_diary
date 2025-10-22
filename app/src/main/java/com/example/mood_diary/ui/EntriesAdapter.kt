@@ -13,6 +13,8 @@ import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.ItemMoodEntryBinding
 import org.threeten.bp.format.TextStyle
 import java.util.Locale
+import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 
 class EntriesAdapter() : ListAdapter<Entry, ViewHolder>(EntryDiffCallback()) {
 
@@ -25,19 +27,22 @@ class EntriesAdapter() : ListAdapter<Entry, ViewHolder>(EntryDiffCallback()) {
                     "${item.date.year} г. " +
                     item.time.toString().substring(0, 5)
 
-            binding.tvMoodEmoji.text = item.mood.emoji
+            Glide.with(binding.root.context)
+                .load(item.mood.emoji)
+                .into(binding.emodjiView)
+
             binding.tvMoodTeg.text = item.teg
             binding.tvMoodDateTime.text = dateTimeText
-            Log.d("fromAdapter", "$item")
 
-            val color = when(item.mood) {
-                Mood.SAD -> R.color.sad
-                Mood.NEUTRAL -> R.color.neutral
-                Mood.HAPPY -> R.color.happy
-                Mood.ANGRY -> R.color.angry
-            }
-
-            binding.root.setBackgroundColor(color)
+//            val colorRes = when(item.mood) {
+//                Mood.SAD -> R.color.sad
+//                Mood.NEUTRAL -> R.color.neutral
+//                Mood.HAPPY -> R.color.happy
+//                Mood.ANGRY -> R.color.angry
+//            }
+//
+//            val colorInt = ContextCompat.getColor(binding.root.context, colorRes)
+//            binding.root.setCardBackgroundColor(colorInt)
         }
     }
 

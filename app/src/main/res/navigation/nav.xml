@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/entriesFragment"
         android:name="com.example.mood_diary.ui.EntriesFragment"
-        android:label="EntriesFragment" >
+        android:label="Мои записи" >
         <action
             android:id="@+id/action_entriesFragment_to_entryEditFragment"
             app:destination="@id/entryEditFragment" />

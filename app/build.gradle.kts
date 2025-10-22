@@ -80,4 +80,8 @@ dependencies {
     // Hilt
     implementation (libs.hilt.android)
     kapt (libs.hilt.compiler)
+    // glide
+    implementation (libs.glide)
+    // refresh
+    implementation(libs.androidx.swiperefreshlayout)
 }

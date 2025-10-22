@@ -29,7 +29,7 @@ class EntriesViewModel @Inject constructor(
     private suspend fun insertTestEntriesOnce() {
         val current = repository.getAllEntries().firstOrNull()
         if (current.isNullOrEmpty()) {
-            val test = Entry(
+            val test1 = Entry(
                     id = 0,
                     des = "Тестовая запись 1",
                     teg = "тег1",
@@ -37,7 +37,16 @@ class EntriesViewModel @Inject constructor(
                     date = LocalDate.now(),
                     time = LocalTime.now()
                 )
-            repository.upsertEntryDatabase(test)
+            val test2 = Entry(
+                id = 0,
+                des = "Тестовая запись 2",
+                teg = "тег2",
+                mood = Mood.NEUTRAL,
+                date = LocalDate.now(),
+                time = LocalTime.now()
+            )
+            repository.upsertEntryDatabase(test1)
+            repository.upsertEntryDatabase(test2)
         }
     }
 
@@ -47,6 +56,7 @@ class EntriesViewModel @Inject constructor(
         val entries: List<Entry> = emptyList(),
 //        val filteredEntries: List<Entry> = emptyList(),
         val searchQuery: String = "",
+        val moods: List<Mood> = Mood.entries,
         val filterType: MoodFilterType = MoodFilterType.ALL,
     ) {
 
@@ -57,6 +67,7 @@ class EntriesViewModel @Inject constructor(
         sealed class Intents {
             data object LoadEntries : Intents()
             data class SearchEntries(val query: String) : Intents()
+            data class OnMoodClicked(val mood: Mood) : Intents()
             data class FilterByMood(val filterType: MoodFilterType) : Intents()
             data class DeleteEntry(val entry: Entry) : Intents()
             data object ClearFilters : Intents()
@@ -185,26 +196,44 @@ class EntriesViewModel @Inject constructor(
                     refreshListener.emit(ViewState.StateTriggers.LoadEntries)
                 }
             }
+
             is ViewState.Intents.SearchEntries -> {
                 viewModelScope.launch {
                     refreshListener.emit(ViewState.StateTriggers.SearchChanged(intent.query))
                 }
             }
+
+            is ViewState.Intents.OnMoodClicked -> handleMoodClicked(intent.mood)
+
             is ViewState.Intents.FilterByMood -> {
                 viewModelScope.launch {
                     refreshListener.emit(ViewState.StateTriggers.FilterChanged(intent.filterType))
                 }
             }
+
             is ViewState.Intents.DeleteEntry -> {
                 viewModelScope.launch {
                     refreshListener.emit(ViewState.StateTriggers.DeleteEntry(intent.entry))
                 }
             }
+
             ViewState.Intents.ClearFilters -> {
                 viewModelScope.launch {
                     refreshListener.emit(ViewState.StateTriggers.ClearFilters)
                 }
             }
+
         }
+    }
+
+    private fun handleMoodClicked(mood: Mood) {
+        val filterType = when (mood) {
+            Mood.HAPPY -> ViewState.MoodFilterType.HAPPY
+            Mood.SAD -> ViewState.MoodFilterType.SAD
+            Mood.ANGRY -> ViewState.MoodFilterType.ANGRY
+            Mood.NEUTRAL -> ViewState.MoodFilterType.NEUTRAL
+        }
+
+        onIntent(ViewState.Intents.FilterByMood(filterType))
     }
 }

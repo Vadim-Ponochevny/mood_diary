@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mood_diary.R
 import com.example.mood_diary.data.model.Entry
+import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.FragmentEntriesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -29,13 +31,13 @@ class EntriesFragment : Fragment(), MenuProvider {
     private var _binding: FragmentEntriesBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter = EntriesAdapter()
+    private val entriesAdapter = EntriesAdapter()
+    private val moodFilterAdapter = FilterAdapter()
 
     private val viewModel: EntriesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -51,7 +53,8 @@ class EntriesFragment : Fragment(), MenuProvider {
                 return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
+            override fun onQueryTextChange(newText: String): Boolean {
+                viewModel.onIntent(EntriesViewModel.ViewState.Intents.SearchEntries(newText))
                 return true
             }
         })
@@ -75,7 +78,9 @@ class EntriesFragment : Fragment(), MenuProvider {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setRView()
+        setEntriesRView()
+        setMoodFilterRView()
+
 
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
@@ -88,10 +93,12 @@ class EntriesFragment : Fragment(), MenuProvider {
             }
         }
 
-//        setupClicks()
+        setupClicks()
     }
 
     private fun updateUI(state: EntriesViewModel.ViewState) {
+
+        showMoodsForFilter(state.moods)
 
         if (state.isLoading) {
             binding.progressBar.visibility = View.VISIBLE
@@ -99,72 +106,52 @@ class EntriesFragment : Fragment(), MenuProvider {
             binding.progressBar.visibility = View.GONE
         }
 
-//        if (state.isError) {
-//            return
-//        } else {
-//        }
+        if (state.isError) {
+            return
+        } else {
+            Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+        }
 
         showEntries(state.entries)
     }
 
-    private fun setRView() {
+    private fun setEntriesRView() {
         binding.emojiRecyclerView.setHasFixedSize(true)
         binding.emojiRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.emojiRecyclerView.adapter = adapter
+        binding.emojiRecyclerView.adapter = entriesAdapter
+    }
+
+    private fun setMoodFilterRView() {
+        binding.moodFilterRecyclerView.setHasFixedSize(true)
+        binding.moodFilterRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.moodFilterRecyclerView.adapter = moodFilterAdapter
     }
 
     private fun showEntries(entries: List<Entry>) {
-        Log.d("fromView", "$entries")
-        adapter.submitList(entries)
+        entriesAdapter.submitList(entries)
     }
 
-//    private fun setupClicks() {
-//        binding.buttonRefresh.setOnClickListener {
-//            viewModel.onIntent(EntriesViewModel.ViewState.Intents.LoadEntries)
-//        }
-//
-//        binding.addEntryButton.setOnClickListener {
-//            findNavController().navigate(R.id.entryEditFragment)
-//        }
-//
-//        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String): Boolean = true
-//
-//            override fun onQueryTextChange(newText: String): Boolean {
-//                viewModel.onIntent(EntriesViewModel.ViewState.Intents.SearchEntries(newText))
-//                return true
-//            }
-//        })
-//
-//        binding.buttonFilterHappy.setOnClickListener {
-//            viewModel.onIntent(EntriesViewModel.ViewState.Intents.FilterByMood(
-//                EntriesViewModel.ViewState.MoodFilterType.HAPPY
-//            ))
-//        }
-//
-//        binding.buttonFilterSad.setOnClickListener {
-//            viewModel.onIntent(EntriesViewModel.ViewState.Intents.FilterByMood(
-//                EntriesViewModel.ViewState.MoodFilterType.SAD
-//            ))
-//        }
-//
-//        binding.buttonFilterAll.setOnClickListener {
-//            viewModel.onIntent(EntriesViewModel.ViewState.Intents.FilterByMood(
-//                EntriesViewModel.ViewState.MoodFilterType.ALL
-//            ))
-//        }
-//
-//        // Кнопка сброса фильтров
-//        binding.buttonClearFilters.setOnClickListener {
-//            viewModel.onIntent(EntriesViewModel.ViewState.Intents.ClearFilters)
-//        }
-//    }
+    private fun showMoodsForFilter(moods: List<Mood> ) {
+        moodFilterAdapter.submitList(moods)
+    }
 
-    // Обработка удаления записи (например, через долгое нажатие)
-//    private fun setupRecyclerViewClicks() {
-//
-//        binding.recyclerView.adapter = adapter
-//    }
+    private fun setupClicks() {
+        binding.swipeRefreshLayout.setOnClickListener {
+            viewModel.onIntent(EntriesViewModel.ViewState.Intents.LoadEntries)
+        }
+
+        moodFilterAdapter.onMoodClick = { mood ->
+            viewModel.onIntent(EntriesViewModel.ViewState.Intents.FilterByMood(mood))
+        }
+
+        binding.resetFilterButton.setOnClickListener {
+            viewModel.onIntent(EntriesViewModel.ViewState.Intents.ClearFilters)
+        }
+
+        binding.addEntryButton.setOnClickListener {
+            findNavController().navigate(R.id.entryEditFragment)
+        }
+    }
 
 //    private fun showDeleteDialog(entry: Entry) {
 //        AlertDialog.Builder(requireContext())

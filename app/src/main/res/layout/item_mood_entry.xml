@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
-    android:background="@drawable/rounded_search"
-    app:cardBackgroundColor="#AAAAAA"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
     android:clickable="true"
     android:focusable="true">
 
@@ -23,7 +24,6 @@
             android:layout_height="wrap_content"
             android:text="28 сентября 2025 г. 09:41"
             android:textSize="13sp"
-            android:textColor="#777"
             android:layout_marginBottom="8dp" />
 
         <LinearLayout
@@ -32,13 +32,11 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/tvMoodEmoji"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:gravity="center"
-                android:text="😊"
-                android:textSize="28sp" />
+            <ImageView
+                android:id="@+id/emodjiView"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:gravity="center" />
 
             <TextView
                 android:id="@+id/tvMoodTeg"
@@ -47,11 +45,11 @@
                 android:layout_weight="1"
                 android:layout_marginStart="12dp"
                 android:text="Сегодня было солнечно и спокойно"
-                android:textSize="16sp"
-                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:maxLines="3"
                 android:ellipsize="end" />
         </LinearLayout>
 
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

@@ -21,14 +21,14 @@ data class Entry(
 ) : Parcelable
 
 enum class Mood(
-    val emoji: String,
+    val emoji: Int,
     val labelRes: Int,
     val value: Int
 ) {
-    SAD("😢", R.string.mood_sad, 1),
-    NEUTRAL("😐", R.string.mood_neutral, 2),
-    HAPPY("😊", R.string.mood_happy, 3),
-    ANGRY("\uD83D\uDE21", R.string.mood_angry, 4);
+    SAD(R.drawable._icon_happy_smile , R.string.mood_sad, 1),
+    NEUTRAL(R.drawable._icon_happy_smile, R.string.mood_neutral, 2),
+    HAPPY(R.drawable._icon_happy_smile, R.string.mood_happy, 3),
+    ANGRY(R.drawable._icon_happy_smile, R.string.mood_angry, 4);
 
     companion object {
         fun fromValue(value: Int): Mood {
