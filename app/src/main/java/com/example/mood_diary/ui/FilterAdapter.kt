@@ -18,6 +18,7 @@ class FilterAdapter(
     var selectedMood: Mood? = null
         set(value) {
             field = value
+            notifyDataSetChanged()
         }
 
     var onMoodClick: ((Mood) -> Unit)? = null
@@ -35,12 +36,6 @@ class FilterAdapter(
 
             binding.root.apply {
                 alpha = if (isSelected) 1f else 0.5f
-
-                if (isSelected) {
-                    post {
-                        requestFocus()
-                    }
-                }
 
                 setOnClickListener {
                     selectedMood = mood

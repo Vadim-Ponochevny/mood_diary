@@ -8,7 +8,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -17,6 +20,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mood_diary.R
 import com.example.mood_diary.data.model.Entry
@@ -24,6 +28,9 @@ import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.FragmentEntriesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
+
 
 @AndroidEntryPoint
 class EntriesFragment : Fragment(), MenuProvider {
@@ -44,7 +51,7 @@ class EntriesFragment : Fragment(), MenuProvider {
         menuInflater.inflate(R.menu.options_menu, menu)
 
         val searchItem = menu.findItem(R.id.search)
-        val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
+        val searchView = searchItem?.actionView as SearchView
 
         searchView.setOnQueryTextListener(
             object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
@@ -78,6 +85,8 @@ class EntriesFragment : Fragment(), MenuProvider {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Мои записи"
+
         setEntriesRView()
         setMoodFilterRView()
 
@@ -98,21 +107,22 @@ class EntriesFragment : Fragment(), MenuProvider {
 
     private fun updateUI(state: EntriesViewModel.ViewState) {
 
-        showMoodsForFilter(state.moods)
+        binding.swipeRefreshLayout.isRefreshing = state.isLoading
 
         if (state.isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
+            binding.emojiRecyclerView.visibility = View.GONE
         } else {
-            binding.progressBar.visibility = View.GONE
+            binding.emojiRecyclerView.visibility = View.VISIBLE
         }
 
         if (state.isError) {
-            return
-        } else {
-            Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Error: Ошибка при загрузке данных", Toast.LENGTH_SHORT).show()
         }
 
-        showEntries(state.entries)
+        moodFilterAdapter.selectedMood = state.filterMood
+
+        showMoodsForFilter(state.moods)
+        showEntries(state.filteredEntries)
     }
 
     private fun setEntriesRView() {
@@ -123,7 +133,11 @@ class EntriesFragment : Fragment(), MenuProvider {
 
     private fun setMoodFilterRView() {
         binding.moodFilterRecyclerView.setHasFixedSize(true)
-        binding.moodFilterRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.moodFilterRecyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
         binding.moodFilterRecyclerView.adapter = moodFilterAdapter
     }
 
@@ -136,7 +150,15 @@ class EntriesFragment : Fragment(), MenuProvider {
     }
 
     private fun setupClicks() {
-        binding.swipeRefreshLayout.setOnClickListener {
+
+        val swipeHandler = SwipeToDeleteEntryCallback(entriesAdapter) { entry, position ->
+            showDeleteDialog(entry, position)
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(binding.emojiRecyclerView)
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.onIntent(EntriesViewModel.ViewState.Intents.LoadEntries)
         }
 
@@ -153,15 +175,19 @@ class EntriesFragment : Fragment(), MenuProvider {
         }
     }
 
-//    private fun showDeleteDialog(entry: Entry) {
-//        AlertDialog.Builder(requireContext())
-//            .setTitle("Удалить запись?")
-//            .setMessage("Вы уверены, что хотите удалить эту запись?")
-//            .setPositiveButton("Удалить") { _, _ ->
-//                viewModel.onIntent(EntriesViewModel.ViewState.Intents.DeleteEntry(entry))
-//            }
-//            .setNegativeButton("Отмена", null)
-//            .show()
-//    }
+    private fun showDeleteDialog(entry: Entry, position: Int) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Удаление записи")
+            .setMessage("Вы точно хотите удалить запись?")
+            .setPositiveButton("Да") { _, _ ->
+                viewModel.onIntent(EntriesViewModel.ViewState.Intents.DeleteEntry(entry))
+            }
+            .setNegativeButton("Нет") { dialog, _ ->
+                entriesAdapter.notifyItemChanged(position)
+
+                dialog.dismiss()
+            }
+            .show()
+    }
 
 }

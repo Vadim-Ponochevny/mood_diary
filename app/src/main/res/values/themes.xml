@@ -4,6 +4,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="searchViewStyle">@style/NoSearchIconSearchView</item>
     </style>
 
     <style name="Theme.Mood_diary" parent="Theme.Material3.Light.NoActionBar">
@@ -14,4 +15,34 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="CustomToolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:layout_height">86dp</item>
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="tint">@android:color/white</item>
+
+        <item name="titleTextAppearance">@style/ToolbarTitleText</item>
+
+    </style>
+
+    <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="AppTheme.SearchView" parent="">
+        <item name="android:textColorPrimary">@android:color/white</item>
+
+        <item name="android:textColorHint">#7A7F80</item>
+
+        <item name="colorControlNormal">@android:color/white</item>
+    </style>
+
+    <style name="NoSearchIconSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchHintIcon">@null</item>
+
+        <item name="queryBackground">@android:color/transparent</item>
+    </style>
+
 </resources>

@@ -8,9 +8,9 @@
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
     app:strokeWidth="0dp"
-    app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    app:cardBackgroundColor="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="28 сентября 2025 г. 09:41"
-            android:textSize="13sp"
+            android:textSize="16sp"
             android:layout_marginBottom="8dp" />
 
         <LinearLayout

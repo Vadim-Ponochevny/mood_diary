@@ -38,7 +38,7 @@ class EntriesViewModel @Inject constructor(
                     time = LocalTime.now()
                 )
             val test2 = Entry(
-                id = 0,
+                id = 1,
                 des = "Тестовая запись 2",
                 teg = "тег2",
                 mood = Mood.NEUTRAL,
@@ -54,21 +54,17 @@ class EntriesViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val isError: Boolean = false,
         val entries: List<Entry> = emptyList(),
-//        val filteredEntries: List<Entry> = emptyList(),
+        val filteredEntries: List<Entry> = emptyList(),
         val searchQuery: String = "",
         val moods: List<Mood> = Mood.entries,
-        val filterType: MoodFilterType = MoodFilterType.ALL,
+        val filterMood: Mood? = null,
     ) {
-
-        enum class MoodFilterType {
-            ALL, HAPPY, SAD, ANGRY, NEUTRAL
-        }
 
         sealed class Intents {
             data object LoadEntries : Intents()
             data class SearchEntries(val query: String) : Intents()
             data class OnMoodClicked(val mood: Mood) : Intents()
-            data class FilterByMood(val filterType: MoodFilterType) : Intents()
+            data class FilterByMood(val filterMood: Mood) : Intents()
             data class DeleteEntry(val entry: Entry) : Intents()
             data object ClearFilters : Intents()
         }
@@ -76,7 +72,7 @@ class EntriesViewModel @Inject constructor(
         sealed class StateTriggers {
             data object LoadEntries : StateTriggers()
             data class SearchChanged(val query: String) : StateTriggers()
-            data class FilterChanged(val filterType: MoodFilterType) : StateTriggers()
+            data class FilterChanged(val filterMood: Mood) : StateTriggers()
             data class DeleteEntry(val entry: Entry) : StateTriggers()
             data object ClearFilters : StateTriggers()
         }
@@ -98,7 +94,7 @@ class EntriesViewModel @Inject constructor(
                     emit(applyFiltersAndSearch(newState))
                 }
                 is ViewState.StateTriggers.FilterChanged -> {
-                    val newState = currentState.copy(filterType = trigger.filterType)
+                    val newState = currentState.copy(filterMood = trigger.filterMood)
                     emit(applyFiltersAndSearch(newState))
                 }
                 is ViewState.StateTriggers.DeleteEntry -> {
@@ -107,7 +103,7 @@ class EntriesViewModel @Inject constructor(
                 }
                 ViewState.StateTriggers.ClearFilters -> {
                     val clearedState = currentState.copy(
-                        filterType = ViewState.MoodFilterType.ALL
+                        filterMood = null
                     )
                     emit(applyFiltersAndSearch(clearedState))
                 }
@@ -122,24 +118,9 @@ class EntriesViewModel @Inject constructor(
             currentState
         )
 
-//    private suspend fun loadInitialEntries(): ViewState {
-//        return try {
-//            val entries = repository.getAllEntries().first()
-//            ViewState(
-//                isLoading = false,
-//                isError = false,
-//                entries = entries,
-//                filteredEntries = entries
-//            )
-//        } catch (e: Exception) {
-//            ViewState(isLoading = false, isError = true)
-//        }
-//    }
-
     private suspend fun updateCurrentEntries(): ViewState {
         return try {
             val entries = repository.getAllEntries().first()
-            Log.d("entriesState", "$entries")
             currentState.copy(
                 isLoading = false,
                 isError = false,
@@ -167,23 +148,12 @@ class EntriesViewModel @Inject constructor(
             }
         }
 
-        if (state.filterType != ViewState.MoodFilterType.ALL) {
-            val targetMood = when (state.filterType) {
-                ViewState.MoodFilterType.HAPPY -> Mood.HAPPY
-                ViewState.MoodFilterType.SAD -> Mood.SAD
-                ViewState.MoodFilterType.ANGRY -> Mood.ANGRY
-                ViewState.MoodFilterType.NEUTRAL -> Mood.NEUTRAL
-                ViewState.MoodFilterType.ALL -> null
-            }
-            result = result.filter { it.mood == targetMood }
-        }
-
-        result = result.sortedByDescending { entry ->
-            entry.date.atTime(entry.time)
+        state.filterMood?.let { mood ->
+            result = result.filter { it.mood == mood }
         }
 
         return state.copy(
-            entries = result,
+            filteredEntries = result,
             isLoading = false,
             isError = false
         )
@@ -203,11 +173,13 @@ class EntriesViewModel @Inject constructor(
                 }
             }
 
-            is ViewState.Intents.OnMoodClicked -> handleMoodClicked(intent.mood)
+            is ViewState.Intents.OnMoodClicked -> {
+                onIntent(ViewState.Intents.FilterByMood(intent.mood))
+            }
 
             is ViewState.Intents.FilterByMood -> {
                 viewModelScope.launch {
-                    refreshListener.emit(ViewState.StateTriggers.FilterChanged(intent.filterType))
+                    refreshListener.emit(ViewState.StateTriggers.FilterChanged(intent.filterMood))
                 }
             }
 
@@ -226,14 +198,4 @@ class EntriesViewModel @Inject constructor(
         }
     }
 
-    private fun handleMoodClicked(mood: Mood) {
-        val filterType = when (mood) {
-            Mood.HAPPY -> ViewState.MoodFilterType.HAPPY
-            Mood.SAD -> ViewState.MoodFilterType.SAD
-            Mood.ANGRY -> ViewState.MoodFilterType.ANGRY
-            Mood.NEUTRAL -> ViewState.MoodFilterType.NEUTRAL
-        }
-
-        onIntent(ViewState.Intents.FilterByMood(filterType))
-    }
 }
