@@ -1,11 +1,11 @@
-package com.example.mood_diary.ui
+package com.example.mood_diary.ui.entries
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mood_diary.data.model.Entry
 import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.domain.EntryRepository
+import com.example.mood_diary.ui.base.IntentAware
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 

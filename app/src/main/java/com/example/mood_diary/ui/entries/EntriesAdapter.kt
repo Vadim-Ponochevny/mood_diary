@@ -1,22 +1,21 @@
-package com.example.mood_diary.ui
+package com.example.mood_diary.ui.entries
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mood_diary.R
-import com.example.mood_diary.ui.EntriesAdapter.ViewHolder
+import com.example.mood_diary.ui.entries.EntriesAdapter.ViewHolder
 import com.example.mood_diary.data.model.Entry
-import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.ItemMoodEntryBinding
 import org.threeten.bp.format.TextStyle
 import java.util.Locale
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 
-class EntriesAdapter() : ListAdapter<Entry, ViewHolder>(EntryDiffCallback()) {
+class EntriesAdapter(
+) : ListAdapter<Entry, ViewHolder>(EntryDiffCallback()) {
+
+    var onEntryClick: ((Int?) -> Unit)? = null
 
     inner class ViewHolder(
         val binding: ItemMoodEntryBinding,
@@ -33,6 +32,10 @@ class EntriesAdapter() : ListAdapter<Entry, ViewHolder>(EntryDiffCallback()) {
 
             binding.tvMoodTeg.text = item.teg
             binding.tvMoodDateTime.text = dateTimeText
+
+            binding.root.setOnClickListener {
+                onEntryClick?.invoke(item.id)
+            }
 
 //            val colorRes = when(item.mood) {
 //                Mood.SAD -> R.color.sad

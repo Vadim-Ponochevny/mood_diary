@@ -1,4 +1,4 @@
-package com.example.mood_diary.ui
+package com.example.mood_diary.ui.common
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,18 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.ItemMoodFilterBinding
-import com.example.mood_diary.ui.FilterAdapter.ViewHolder
-import org.threeten.bp.format.TextStyle
-import java.util.Locale
+import com.example.mood_diary.ui.common.FilterAdapter.ViewHolder
 
 class FilterAdapter(
 ) : ListAdapter<Mood, ViewHolder>(MoodDiffCallback()) {
 
     var selectedMood: Mood? = null
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
 
     var onMoodClick: ((Mood) -> Unit)? = null
 
@@ -34,13 +28,19 @@ class FilterAdapter(
 
             val isSelected = mood == selectedMood
 
-            binding.root.apply {
-                alpha = if (isSelected) 1f else 0.5f
+            binding.root.alpha = if (isSelected) 1f else 0.5f
 
-                setOnClickListener {
-                    selectedMood = mood
-                    onMoodClick?.invoke(mood)
-                }
+            binding.root.setOnClickListener {
+                if (selectedMood == mood) return@setOnClickListener
+
+                val oldPosition = currentList.indexOf(selectedMood)
+                val newPosition = bindingAdapterPosition
+
+                selectedMood = mood
+                onMoodClick?.invoke(mood)
+
+                if (oldPosition != -1) notifyItemChanged(oldPosition)
+                notifyItemChanged(newPosition)
             }
         }
     }

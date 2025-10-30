@@ -1,15 +1,12 @@
-package com.example.mood_diary.ui
+package com.example.mood_diary.ui.entries
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuHost
@@ -30,6 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
+import com.example.mood_diary.ui.addEdit.AddEditEntryViewModel
+import com.example.mood_diary.ui.common.FilterAdapter
 
 
 @AndroidEntryPoint
@@ -41,7 +40,10 @@ class EntriesFragment : Fragment(), MenuProvider {
     private val entriesAdapter = EntriesAdapter()
     private val moodFilterAdapter = FilterAdapter()
 
-    private val viewModel: EntriesViewModel by viewModels()
+    private val entriesViewModel: EntriesViewModel by viewModels()
+    private val addEditEntryViewModel: AddEditEntryViewModel by viewModels()
+
+    private lateinit var searchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,20 +53,25 @@ class EntriesFragment : Fragment(), MenuProvider {
         menuInflater.inflate(R.menu.options_menu, menu)
 
         val searchItem = menu.findItem(R.id.search)
-        val searchView = searchItem?.actionView as SearchView
+        searchView = searchItem?.actionView as SearchView
 
         searchView.setOnQueryTextListener(
-            object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                viewModel.onIntent(EntriesViewModel.ViewState.Intents.SearchEntries(newText))
+                entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.SearchEntries(newText))
                 return true
             }
         })
+
+    }
+
+    override fun onPrepareMenu(menu: Menu) {
+        super.onPrepareMenu(menu)
 
     }
 
@@ -96,8 +103,9 @@ class EntriesFragment : Fragment(), MenuProvider {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.entriesState.collect { state ->
+                entriesViewModel.entriesState.collect { state ->
                     updateUI(state)
+
                 }
             }
         }
@@ -119,6 +127,7 @@ class EntriesFragment : Fragment(), MenuProvider {
             Toast.makeText(requireContext(), "Error: Ошибка при загрузке данных", Toast.LENGTH_SHORT).show()
         }
 
+        // Адаптер поучает из стэйта эмоцию для фильтра
         moodFilterAdapter.selectedMood = state.filterMood
 
         showMoodsForFilter(state.moods)
@@ -159,19 +168,24 @@ class EntriesFragment : Fragment(), MenuProvider {
         itemTouchHelper.attachToRecyclerView(binding.emojiRecyclerView)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.onIntent(EntriesViewModel.ViewState.Intents.LoadEntries)
+            entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.LoadEntries)
         }
 
         moodFilterAdapter.onMoodClick = { mood ->
-            viewModel.onIntent(EntriesViewModel.ViewState.Intents.FilterByMood(mood))
+            entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.FilterByMood(mood))
         }
 
         binding.resetFilterButton.setOnClickListener {
-            viewModel.onIntent(EntriesViewModel.ViewState.Intents.ClearFilters)
+            entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.ClearFilters)
         }
 
         binding.addEntryButton.setOnClickListener {
             findNavController().navigate(R.id.entryEditFragment)
+        }
+
+        // Переход к другому фрагменту
+        entriesAdapter.onEntryClick = { id ->
+            addEditEntryViewModel.viewState.value.entryId = id
         }
     }
 
@@ -180,7 +194,7 @@ class EntriesFragment : Fragment(), MenuProvider {
             .setTitle("Удаление записи")
             .setMessage("Вы точно хотите удалить запись?")
             .setPositiveButton("Да") { _, _ ->
-                viewModel.onIntent(EntriesViewModel.ViewState.Intents.DeleteEntry(entry))
+                entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.DeleteEntry(entry))
             }
             .setNegativeButton("Нет") { dialog, _ ->
                 entriesAdapter.notifyItemChanged(position)

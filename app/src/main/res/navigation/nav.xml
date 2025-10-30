@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/entriesFragment"
-        android:name="com.example.mood_diary.ui.EntriesFragment"
+        android:name="com.example.mood_diary.ui.entries.EntriesFragment"
         android:label="Мои записи" >
         <action
             android:id="@+id/action_entriesFragment_to_entryEditFragment"
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/entryEditFragment"
-        android:name="com.example.mood_diary.EntryEditFragment"
+        android:name="com.example.mood_diary.ui.addEdit.EntryEditFragment"
         android:label="Добавить запись" />
     <fragment
         android:id="@+id/moodStatsFragment"

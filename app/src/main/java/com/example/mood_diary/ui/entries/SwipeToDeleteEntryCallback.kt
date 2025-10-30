@@ -1,4 +1,4 @@
-package com.example.mood_diary.ui
+package com.example.mood_diary.ui.entries
 
 import android.graphics.Canvas
 import androidx.recyclerview.widget.ItemTouchHelper

@@ -39,6 +39,13 @@
                 app:cardBackgroundColor="@android:color/white"/>
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorControlHighlight"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp" />
+
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
