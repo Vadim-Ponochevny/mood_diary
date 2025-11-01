@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.dagger.hilt)
     id("kotlin-parcelize")
-
+    alias(libs.plugins.safe.args)
 }
 
 android {
@@ -84,4 +84,6 @@ dependencies {
     implementation (libs.glide)
     // refresh
     implementation(libs.androidx.swiperefreshlayout)
+    // safe args
+//    implementation(libs.androidx.navigation.safe.args.gradle.plugin)
 }

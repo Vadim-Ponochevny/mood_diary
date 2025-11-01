@@ -6,6 +6,7 @@ import com.example.mood_diary.data.model.Entry
 import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.domain.EntryRepository
 import com.example.mood_diary.ui.base.IntentAware
+import com.example.mood_diary.ui.common.MoodFilterItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 
@@ -56,7 +57,9 @@ class EntriesViewModel @Inject constructor(
         val entries: List<Entry> = emptyList(),
         val filteredEntries: List<Entry> = emptyList(),
         val searchQuery: String = "",
-        val moods: List<Mood> = Mood.entries,
+        val moods: List<MoodFilterItem> = Mood.entries.map {
+            MoodFilterItem(mood = it, isSelected = false)
+        },
         val filterMood: Mood? = null,
     ) {
 
@@ -152,8 +155,16 @@ class EntriesViewModel @Inject constructor(
             result = result.filter { it.mood == mood }
         }
 
+        val moodsForFilter = Mood.entries.map { mood ->
+            MoodFilterItem(
+                mood = mood,
+                isSelected = mood == state.filterMood
+            )
+        }
+
         return state.copy(
             filteredEntries = result,
+            moods = moodsForFilter,
             isLoading = false,
             isError = false
         )
@@ -174,7 +185,13 @@ class EntriesViewModel @Inject constructor(
             }
 
             is ViewState.Intents.OnMoodClicked -> {
-                onIntent(ViewState.Intents.FilterByMood(intent.mood))
+                val currentFilter = currentState.filterMood
+
+                if (currentFilter == intent.mood) {
+                    onIntent(ViewState.Intents.ClearFilters)
+                } else {
+                    onIntent(ViewState.Intents.FilterByMood(intent.mood))
+                }
             }
 
             is ViewState.Intents.FilterByMood -> {

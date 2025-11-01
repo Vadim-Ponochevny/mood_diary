@@ -46,6 +46,7 @@ threetenabp = { module = "com.jakewharton.threetenabp:threetenabp", version.ref 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationFragmentKtx" }
 
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt"}
 dagger-hilt = {id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid"}

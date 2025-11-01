@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide
 class EntriesAdapter(
 ) : ListAdapter<Entry, ViewHolder>(EntryDiffCallback()) {
 
-    var onEntryClick: ((Int?) -> Unit)? = null
+    var onEntryClick: ((Int) -> Unit) = {}
 
     inner class ViewHolder(
         val binding: ItemMoodEntryBinding,
@@ -34,7 +34,7 @@ class EntriesAdapter(
             binding.tvMoodDateTime.text = dateTimeText
 
             binding.root.setOnClickListener {
-                onEntryClick?.invoke(item.id)
+                onEntryClick.invoke(item.id)
             }
 
 //            val colorRes = when(item.mood) {

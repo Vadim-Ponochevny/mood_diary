@@ -11,9 +11,7 @@ import com.example.mood_diary.databinding.ItemMoodFilterBinding
 import com.example.mood_diary.ui.common.FilterAdapter.ViewHolder
 
 class FilterAdapter(
-) : ListAdapter<Mood, ViewHolder>(MoodDiffCallback()) {
-
-    var selectedMood: Mood? = null
+) : ListAdapter<MoodFilterItem, ViewHolder>(MoodFilterItemDiffCallback()) {
 
     var onMoodClick: ((Mood) -> Unit)? = null
 
@@ -21,26 +19,15 @@ class FilterAdapter(
         private val binding: ItemMoodFilterBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(mood: Mood) {
+        fun bind(item: MoodFilterItem) {
             Glide.with(binding.root.context)
-                .load(mood.emoji)
+                .load(item.mood.emoji)
                 .into(binding.moodIcon)
 
-            val isSelected = mood == selectedMood
-
-            binding.root.alpha = if (isSelected) 1f else 0.5f
+            binding.root.alpha = if (item.isSelected) 1f else 0.5f
 
             binding.root.setOnClickListener {
-                if (selectedMood == mood) return@setOnClickListener
-
-                val oldPosition = currentList.indexOf(selectedMood)
-                val newPosition = bindingAdapterPosition
-
-                selectedMood = mood
-                onMoodClick?.invoke(mood)
-
-                if (oldPosition != -1) notifyItemChanged(oldPosition)
-                notifyItemChanged(newPosition)
+                onMoodClick?.invoke(item.mood)
             }
         }
     }
@@ -64,19 +51,13 @@ class FilterAdapter(
     
 }
 
-class MoodDiffCallback : DiffUtil.ItemCallback<Mood>() {
-
-    override fun areItemsTheSame(
-        oldItemPosition: Mood,
-        newItemPosition: Mood
-    ): Boolean {
-        return oldItemPosition.emoji == newItemPosition.emoji
+class MoodFilterItemDiffCallback : DiffUtil.ItemCallback<MoodFilterItem>() {
+    override fun areItemsTheSame(oldItem: MoodFilterItem, newItem: MoodFilterItem): Boolean {
+        return oldItem.isSelected == newItem.isSelected
     }
 
-    override fun areContentsTheSame(
-        oldItemPosition: Mood,
-        newItemPosition: Mood
-    ): Boolean {
-        return oldItemPosition.value == newItemPosition.value
+    override fun areContentsTheSame(oldItem: MoodFilterItem, newItem: MoodFilterItem): Boolean {
+        return oldItem.isSelected == newItem.isSelected
+
     }
 }

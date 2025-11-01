@@ -21,4 +21,8 @@ class EntryRepositoryImpl  @Inject constructor(
     override fun getAllEntries() : Flow<List<Entry>> {
         return dao.getAllEntries()
     }
+
+    override suspend fun getEntryById(id: Int) : Entry? {
+        return dao.getEntryById(id)
+    }
 }

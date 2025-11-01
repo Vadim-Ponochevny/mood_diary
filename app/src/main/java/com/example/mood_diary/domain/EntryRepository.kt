@@ -10,5 +10,7 @@ interface EntryRepository {
 
     suspend fun deleteEntryDatabase (entry: Entry)
 
+    suspend fun getEntryById (id: Int) : Entry?
+
     fun getAllEntries () : Flow<List<Entry>>
 }

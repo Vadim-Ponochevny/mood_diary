@@ -8,7 +8,7 @@ import com.example.mood_diary.data.model.Entry
 
 @Database(
     entities = [Entry::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

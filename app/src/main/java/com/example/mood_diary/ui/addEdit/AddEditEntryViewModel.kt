@@ -21,7 +21,7 @@ class AddEditEntryViewModel @Inject constructor(
 ) : ViewModel(), IntentAware<AddEditEntryViewModel.Intents> {
 
     data class ViewState(
-        val entryId: Int? = null,
+        val entryId: Int = 0,
         val description: String = "",
         val tag: String = "",
         val selectedMood: Mood = Mood.NEUTRAL,
@@ -29,7 +29,8 @@ class AddEditEntryViewModel @Inject constructor(
         val time: LocalTime = LocalTime.now(),
         val isLoading: Boolean = false,
         val saveSuccessful: Boolean = false,
-        val isError: Boolean = false
+        val isError: Boolean = false,
+        val moods: List<Mood> = Mood.entries,
     )
 
     sealed class Intents {
@@ -64,41 +65,55 @@ class AddEditEntryViewModel @Inject constructor(
 
             val entry = repository.getEntryById(id)
 
-            _viewState.update {
-                it.copy(
-                    entryId = entry.id,
-                    description = entry.des,
-                    tag = entry.teg,
-                    selectedMood = entry.mood,
-                    isLoading = false
-                )
+            entry?.let { foundedEntry ->
+                _viewState.update {
+                    it.copy(
+                        entryId = foundedEntry.id,
+                        description = foundedEntry.des,
+                        tag = foundedEntry.teg,
+                        selectedMood = foundedEntry.mood,
+                        isLoading = false
+                    )
+                }
             }
+
         }
     }
 
-    private fun updateDescription(text: String) {
-        _viewState.update { it.copy(description = text) }
+    private fun updateDescription(description: String) {
+        _viewState.update {
+            it.copy(
+                description = description
+            )
+        }
     }
 
-    private fun updateTag(text: String) {
-        _viewState.update { it.copy(tag = text) }
+    private fun updateTag(tag: String) {
+        _viewState.update {
+            it.copy(
+                tag = tag
+            )
+        }
     }
 
     private fun updateMood(mood: Mood) {
-        _viewState.update { it.copy(selectedMood = mood) }
+        _viewState.update {
+            it.copy(
+                selectedMood = mood
+            )
+        }
     }
 
     private fun saveEntry() {
         viewModelScope.launch {
             val state = _viewState.value
-            if (state.description.isBlank()) {
+            if (state.tag.isBlank()) {
                 // Здесь можно установить флаг ошибки, если описание пустое
                 return@launch
             }
 
-            // Создание новой или обновление существующей записи
             val entryToSave = Entry(
-                id = state.entryId ?: 0, // 0 для новой записи (автоинкремент)
+                id = state.entryId,
                 des = state.description,
                 teg = state.tag,
                 mood = state.selectedMood,
@@ -108,7 +123,6 @@ class AddEditEntryViewModel @Inject constructor(
 
             try {
                 repository.upsertEntryDatabase(entryToSave)
-                // Устанавливаем флаг успешного сохранения для навигации
                 _viewState.update { it.copy(saveSuccessful = true) }
             } catch (e: Exception) {
                 _viewState.update { it.copy(isError = true) }

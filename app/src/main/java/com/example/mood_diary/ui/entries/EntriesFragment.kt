@@ -1,6 +1,7 @@
 package com.example.mood_diary.ui.entries
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -27,8 +28,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
-import com.example.mood_diary.ui.addEdit.AddEditEntryViewModel
 import com.example.mood_diary.ui.common.FilterAdapter
+import com.example.mood_diary.ui.common.MoodFilterItem
 
 
 @AndroidEntryPoint
@@ -40,8 +41,7 @@ class EntriesFragment : Fragment(), MenuProvider {
     private val entriesAdapter = EntriesAdapter()
     private val moodFilterAdapter = FilterAdapter()
 
-    private val entriesViewModel: EntriesViewModel by viewModels()
-    private val addEditEntryViewModel: AddEditEntryViewModel by viewModels()
+    private val viewModel: EntriesViewModel by viewModels()
 
     private lateinit var searchView: SearchView
 
@@ -63,7 +63,7 @@ class EntriesFragment : Fragment(), MenuProvider {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.SearchEntries(newText))
+                viewModel.onIntent(EntriesViewModel.ViewState.Intents.SearchEntries(newText))
                 return true
             }
         })
@@ -103,7 +103,7 @@ class EntriesFragment : Fragment(), MenuProvider {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                entriesViewModel.entriesState.collect { state ->
+                viewModel.entriesState.collect { state ->
                     updateUI(state)
 
                 }
@@ -128,9 +128,11 @@ class EntriesFragment : Fragment(), MenuProvider {
         }
 
         // Адаптер поучает из стэйта эмоцию для фильтра
-        moodFilterAdapter.selectedMood = state.filterMood
+//        moodFilterAdapter.selectedMood = state.filterMood
 
         showMoodsForFilter(state.moods)
+        var deb = state.moods
+        Log.d("moods", "$deb")
         showEntries(state.filteredEntries)
     }
 
@@ -154,7 +156,7 @@ class EntriesFragment : Fragment(), MenuProvider {
         entriesAdapter.submitList(entries)
     }
 
-    private fun showMoodsForFilter(moods: List<Mood> ) {
+    private fun showMoodsForFilter(moods: List<MoodFilterItem> ) {
         moodFilterAdapter.submitList(moods)
     }
 
@@ -168,24 +170,25 @@ class EntriesFragment : Fragment(), MenuProvider {
         itemTouchHelper.attachToRecyclerView(binding.emojiRecyclerView)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.LoadEntries)
+            viewModel.onIntent(EntriesViewModel.ViewState.Intents.LoadEntries)
         }
 
         moodFilterAdapter.onMoodClick = { mood ->
-            entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.FilterByMood(mood))
+            viewModel.onIntent(EntriesViewModel.ViewState.Intents.FilterByMood(mood))
         }
 
         binding.resetFilterButton.setOnClickListener {
-            entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.ClearFilters)
+            viewModel.onIntent(EntriesViewModel.ViewState.Intents.ClearFilters)
         }
 
         binding.addEntryButton.setOnClickListener {
-            findNavController().navigate(R.id.entryEditFragment)
+            findNavController().navigate(R.id.addEditEntryFragment)
         }
 
         // Переход к другому фрагменту
         entriesAdapter.onEntryClick = { id ->
-            addEditEntryViewModel.viewState.value.entryId = id
+            val action = EntriesFragmentDirections.actionEntriesFragmentToEntryEditFragment(id)
+            findNavController().navigate(action)
         }
     }
 
@@ -194,7 +197,7 @@ class EntriesFragment : Fragment(), MenuProvider {
             .setTitle("Удаление записи")
             .setMessage("Вы точно хотите удалить запись?")
             .setPositiveButton("Да") { _, _ ->
-                entriesViewModel.onIntent(EntriesViewModel.ViewState.Intents.DeleteEntry(entry))
+                viewModel.onIntent(EntriesViewModel.ViewState.Intents.DeleteEntry(entry))
             }
             .setNegativeButton("Нет") { dialog, _ ->
                 entriesAdapter.notifyItemChanged(position)
@@ -202,6 +205,11 @@ class EntriesFragment : Fragment(), MenuProvider {
                 dialog.dismiss()
             }
             .show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

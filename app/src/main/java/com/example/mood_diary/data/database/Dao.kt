@@ -17,4 +17,7 @@ interface Dao {
 
     @Query("SELECT * FROM entries")
     fun getAllEntries () : Flow<List<Entry>>
+
+    @Query("SELECT * FROM entries WHERE id = :id")
+    suspend fun getEntryById (id: Int) : Entry?
 }

@@ -10,15 +10,20 @@
         android:label="Мои записи" >
         <action
             android:id="@+id/action_entriesFragment_to_entryEditFragment"
-            app:destination="@id/entryEditFragment" />
+            app:destination="@id/addEditEntryFragment" />
         <action
             android:id="@+id/action_entriesFragment_to_moodStatsFragment"
             app:destination="@id/moodStatsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/entryEditFragment"
-        android:name="com.example.mood_diary.ui.addEdit.EntryEditFragment"
-        android:label="Добавить запись" />
+        android:id="@+id/addEditEntryFragment"
+        android:name="com.example.mood_diary.ui.addEdit.AddEditEntryFragment"
+        android:label="Добавить запись" >
+        <argument
+            android:name="entryId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
     <fragment
         android:id="@+id/moodStatsFragment"
         android:name="com.example.mood_diary.MoodStatsFragment"

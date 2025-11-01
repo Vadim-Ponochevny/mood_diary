@@ -12,7 +12,7 @@ import org.threeten.bp.LocalTime
 @Entity(tableName = "Entries")
 data class Entry(
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
+    val id: Int,
     val mood: Mood,
     val teg: String,
     val des: String = "",
