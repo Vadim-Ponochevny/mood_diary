@@ -6,6 +6,7 @@ import com.example.mood_diary.data.model.Entry
 import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.domain.EntryRepository
 import com.example.mood_diary.ui.base.IntentAware
+import com.example.mood_diary.ui.common.MoodFilterItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +31,9 @@ class AddEditEntryViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val saveSuccessful: Boolean = false,
         val isError: Boolean = false,
-        val moods: List<Mood> = Mood.entries,
+        val moods: List<MoodFilterItem> = Mood.entries.map {
+            MoodFilterItem(mood = it, isSelected = false)
+        },
     )
 
     sealed class Intents {
@@ -65,13 +68,18 @@ class AddEditEntryViewModel @Inject constructor(
 
             val entry = repository.getEntryById(id)
 
-            entry?.let { foundedEntry ->
+            entry?.let { founded ->
+                val updatedMoods = Mood.entries.map {
+                    MoodFilterItem(it, isSelected = it == founded.mood)
+                }
+
                 _viewState.update {
                     it.copy(
-                        entryId = foundedEntry.id,
-                        description = foundedEntry.des,
-                        tag = foundedEntry.teg,
-                        selectedMood = foundedEntry.mood,
+                        entryId = founded.id,
+                        description = founded.des,
+                        tag = founded.teg,
+                        selectedMood = founded.mood,
+                        moods = updatedMoods,
                         isLoading = false
                     )
                 }
@@ -97,9 +105,13 @@ class AddEditEntryViewModel @Inject constructor(
     }
 
     private fun updateMood(mood: Mood) {
-        _viewState.update {
-            it.copy(
-                selectedMood = mood
+        _viewState.update { state ->
+            val updatedMoods = state.moods.map {
+                MoodFilterItem(it.mood, isSelected = it.mood == mood)
+            }
+            state.copy(
+                selectedMood = mood,
+                moods = updatedMoods
             )
         }
     }
@@ -118,7 +130,7 @@ class AddEditEntryViewModel @Inject constructor(
                 teg = state.tag,
                 mood = state.selectedMood,
                 date = LocalDate.now(), // Используем текущую дату
-                time = LocalTime.now()  // Используем текущее время
+                time = LocalTime.now(),  // Используем текущее время
             )
 
             try {

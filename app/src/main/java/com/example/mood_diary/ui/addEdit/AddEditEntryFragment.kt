@@ -1,9 +1,14 @@
 package com.example.mood_diary.ui.addEdit
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,14 +21,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.FragmentEntryEditBinding
 import com.example.mood_diary.ui.common.FilterAdapter
+import com.example.mood_diary.ui.common.MoodFilterItem
 import com.example.mood_diary.ui.entries.EntriesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.getValue
+import androidx.core.widget.addTextChangedListener
+import com.example.mood_diary.R
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
+import org.threeten.bp.LocalTime
+import java.time.Instant
+import java.time.ZoneId
 
 @AndroidEntryPoint
-class AddEditEntryFragment : Fragment() {
+class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private val args: AddEditEntryFragmentArgs by navArgs()
 
@@ -66,6 +80,8 @@ class AddEditEntryFragment : Fragment() {
 
         setupListeners()
         setupMoodSelector()
+        setSpinner()
+        setMaterialPickers()
     }
 
     private fun observeViewState() {
@@ -78,30 +94,27 @@ class AddEditEntryFragment : Fragment() {
         }
     }
 
-    /**
-     * Отрисовывает состояние ViewState на UI.
-     */
     private fun render(state: AddEditEntryViewModel.ViewState) {
-        // Установка данных в поля ввода
-        binding.descriptionEditText.setText(state.description)
-        binding.tagEditText.setText(state.tag)
+        showMoodSelector(state.moods)
 
-        // TODO: Обновить UI для выбранного настроения (state.selectedMood)
+        if (binding.descriptionEditText.text.toString() != state.description) {
+            binding.descriptionEditText.setText(state.description)
+        }
 
-        // Обработка загрузки
+        binding.dateEditText.setText(state.date.toString())
+        binding.timeEditText.setText(state.time.toString())
+
         binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
         binding.saveButton.isEnabled = !state.isLoading
 
-        // Обработка успешного сохранения
         if (state.saveSuccessful) {
-            findNavController().popBackStack() // Возвращаемся на предыдущий экран
+            findNavController().popBackStack()
         }
-
         // TODO: Обработка ошибки (state.isError)
+
     }
 
     private fun setupListeners() {
-        // Слушатель для кнопки сохранения
         binding.saveButton.setOnClickListener {
             viewModel.onIntent(AddEditEntryViewModel.Intents.SaveEntry)
         }
@@ -110,13 +123,43 @@ class AddEditEntryFragment : Fragment() {
             viewModel.onIntent(AddEditEntryViewModel.Intents.UpdateMood(mood))
         }
 
-        // Слушатели для ввода текста (один из способов, нужно использовать TextWatcher)
-        // Пример для описания:
-        // binding.editTextDescription.addTextChangedListener { text ->
-        //     viewModel.onIntent(AddEditEntryViewModel.ViewState.Intents.UpdateDescription(text.toString()))
-        // }
+        binding.descriptionEditText.addTextChangedListener(
+            object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+                }
 
-        // TODO: Добавить слушатели для изменения текста и настроения
+                override fun afterTextChanged(s: Editable?) {
+                    viewModel.onIntent(AddEditEntryViewModel.Intents.UpdateDescription(s.toString()))
+                }
+            }
+        )
+
+    }
+
+    private fun setSpinner() {
+
+        val spinner: Spinner = binding.tagSpinner
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.tags_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
+        }
+        spinner.onItemSelectedListener = this
+
     }
 
     private fun setupMoodSelector() {
@@ -127,15 +170,53 @@ class AddEditEntryFragment : Fragment() {
             false
         )
         binding.moodSelectedRecyclerView.adapter = moodFilterAdapter
-
-//        moodFilterAdapter.submitList(Mood.values().toList())
     }
 
-
+    private fun showMoodSelector(moods: List<MoodFilterItem>) {
+        moodFilterAdapter.submitList(moods)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        val selectedTag = p0?.getItemAtPosition(p2).toString()
+        viewModel.onIntent(AddEditEntryViewModel.Intents.UpdateTag(selectedTag))
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+    }
+
+    private fun setMaterialPickers() {
+        binding.dateEditText.setOnClickListener {
+            val datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Выберите дату")
+                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                .build()
+
+            datePicker.addOnPositiveButtonClickListener { millis ->
+                val date = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
+                viewModel.onIntent(AddEditEntryViewModel.Intents.UpdateDate(date))
+            }
+
+            datePicker.show(parentFragmentManager, "DATE_PICKER")
+        }
+
+        binding.timeEditText.setOnClickListener {
+            val timePicker = MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setTitleText("Выберите время")
+                .build()
+
+            timePicker.addOnPositiveButtonClickListener {
+                val time = LocalTime.of(timePicker.hour, timePicker.minute)
+                viewModel.onIntent(AddEditEntryViewModel.Intents.UpdateTime(time))
+            }
+
+            timePicker.show(parentFragmentManager, "TIME_PICKER")
+        }
     }
 
 }
