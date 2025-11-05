@@ -9,6 +9,8 @@ import com.bumptech.glide.Glide
 import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.ItemMoodFilterBinding
 import com.example.mood_diary.ui.common.FilterAdapter.ViewHolder
+import androidx.core.content.ContextCompat
+import com.example.mood_diary.R
 
 class FilterAdapter(
 ) : ListAdapter<MoodFilterItem, ViewHolder>(MoodFilterItemDiffCallback()) {
@@ -24,7 +26,19 @@ class FilterAdapter(
                 .load(item.mood.emoji)
                 .into(binding.moodIcon)
 
-            binding.root.alpha = if (item.isSelected) 1f else 0.5f
+            if (item.isSelected) {
+                binding.moodCard.setCardBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, R.color.white)
+                )
+                binding.moodCard.alpha = 1f
+            } else {
+                binding.moodCard.strokeColor =
+                    ContextCompat.getColor(binding.root.context, android.R.color.transparent)
+                binding.moodCard.setCardBackgroundColor(
+                    ContextCompat.getColor(binding.root.context, android.R.color.white)
+                )
+                binding.moodCard.alpha = 0.5f
+            }
 
             binding.root.setOnClickListener {
                 onMoodClick?.invoke(item.mood)
@@ -53,11 +67,11 @@ class FilterAdapter(
 
 class MoodFilterItemDiffCallback : DiffUtil.ItemCallback<MoodFilterItem>() {
     override fun areItemsTheSame(oldItem: MoodFilterItem, newItem: MoodFilterItem): Boolean {
-        return oldItem.isSelected == newItem.isSelected
+        return oldItem.mood == newItem.mood
     }
 
     override fun areContentsTheSame(oldItem: MoodFilterItem, newItem: MoodFilterItem): Boolean {
-        return oldItem.isSelected == newItem.isSelected
+        return oldItem == newItem
 
     }
 }

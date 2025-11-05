@@ -92,29 +92,33 @@ class EntriesFragment : Fragment(), MenuProvider {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Мои записи"
+        setTitleForFragment()
 
         setEntriesRView()
         setMoodFilterRView()
 
+        setMenuHost()
 
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.entriesState.collect { state ->
-                    updateUI(state)
-
-                }
-            }
-        }
+        observeToViewModel()
 
         setupClicks()
     }
 
-    private fun updateUI(state: EntriesViewModel.ViewState) {
+    private fun setTitleForFragment() {
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = "Мои записи"
+    }
 
+    private fun observeToViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.entriesState.collect { state ->
+                    updateUI(state)
+                }
+            }
+        }
+    }
+
+    private fun updateUI(state: EntriesViewModel.ViewState) {
         binding.swipeRefreshLayout.isRefreshing = state.isLoading
 
         if (state.isLoading) {
@@ -127,13 +131,16 @@ class EntriesFragment : Fragment(), MenuProvider {
             Toast.makeText(requireContext(), "Error: Ошибка при загрузке данных", Toast.LENGTH_SHORT).show()
         }
 
-        // Адаптер поучает из стэйта эмоцию для фильтра
-//        moodFilterAdapter.selectedMood = state.filterMood
-
         showMoodsForFilter(state.moods)
-        var deb = state.moods
-        Log.d("moods", "$deb")
         showEntries(state.filteredEntries)
+    }
+
+    private fun showEntries(entries: List<Entry>) {
+        entriesAdapter.submitList(entries)
+    }
+
+    private fun showMoodsForFilter(moods: List<MoodFilterItem> ) {
+        moodFilterAdapter.submitList(moods)
     }
 
     private fun setEntriesRView() {
@@ -152,16 +159,7 @@ class EntriesFragment : Fragment(), MenuProvider {
         binding.moodFilterRecyclerView.adapter = moodFilterAdapter
     }
 
-    private fun showEntries(entries: List<Entry>) {
-        entriesAdapter.submitList(entries)
-    }
-
-    private fun showMoodsForFilter(moods: List<MoodFilterItem> ) {
-        moodFilterAdapter.submitList(moods)
-    }
-
     private fun setupClicks() {
-
         val swipeHandler = SwipeToDeleteEntryCallback(entriesAdapter) { entry, position ->
             showDeleteDialog(entry, position)
         }
@@ -174,7 +172,7 @@ class EntriesFragment : Fragment(), MenuProvider {
         }
 
         moodFilterAdapter.onMoodClick = { mood ->
-            viewModel.onIntent(EntriesViewModel.ViewState.Intents.FilterByMood(mood))
+            viewModel.onIntent(EntriesViewModel.ViewState.Intents.OnMoodClicked(mood))
         }
 
         binding.resetFilterButton.setOnClickListener {
@@ -185,11 +183,15 @@ class EntriesFragment : Fragment(), MenuProvider {
             findNavController().navigate(R.id.addEditEntryFragment)
         }
 
-        // Переход к другому фрагменту
         entriesAdapter.onEntryClick = { id ->
             val action = EntriesFragmentDirections.actionEntriesFragmentToEntryEditFragment(id)
             findNavController().navigate(action)
         }
+    }
+
+    private fun setMenuHost() {
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun showDeleteDialog(entry: Entry, position: Int) {
