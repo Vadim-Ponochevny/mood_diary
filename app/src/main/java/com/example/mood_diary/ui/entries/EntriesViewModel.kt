@@ -13,43 +13,11 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalTime
 
 @HiltViewModel
 class EntriesViewModel @Inject constructor(
     private val repository: EntryRepository
 ) : ViewModel(), IntentAware<EntriesViewModel.ViewState.Intents> {
-
-    init {
-        viewModelScope.launch {
-            insertTestEntriesOnce()
-        }
-    }
-
-    private suspend fun insertTestEntriesOnce() {
-        val current = repository.getAllEntries().firstOrNull()
-        if (current.isNullOrEmpty()) {
-            val test1 = Entry(
-                    id = 0,
-                    des = "Тестовая запись 1",
-                    teg = "тег1",
-                    mood = Mood.HAPPY,
-                    date = LocalDate.now(),
-                    time = LocalTime.now()
-                )
-            val test2 = Entry(
-                id = 1,
-                des = "Тестовая запись 2",
-                teg = "тег2",
-                mood = Mood.NEUTRAL,
-                date = LocalDate.now(),
-                time = LocalTime.now()
-            )
-            repository.upsertEntryDatabase(test1)
-            repository.upsertEntryDatabase(test2)
-        }
-    }
 
     data class ViewState(
         val isLoading: Boolean = false,

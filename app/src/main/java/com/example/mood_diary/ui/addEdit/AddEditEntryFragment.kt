@@ -1,5 +1,6 @@
 package com.example.mood_diary.ui.addEdit
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,23 +20,21 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.FragmentEntryEditBinding
 import com.example.mood_diary.ui.common.FilterAdapter
 import com.example.mood_diary.ui.common.MoodFilterItem
-import com.example.mood_diary.ui.entries.EntriesViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.getValue
-import androidx.core.widget.addTextChangedListener
 import com.example.mood_diary.R
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import org.threeten.bp.LocalTime
-import java.time.Instant
-import java.time.ZoneId
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
+import org.threeten.bp.format.TextStyle
+import java.util.Locale
 
 @AndroidEntryPoint
 class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
@@ -94,6 +94,7 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun render(state: AddEditEntryViewModel.ViewState) {
         showMoodSelector(state.moods)
 
@@ -101,8 +102,22 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
             binding.descriptionEditText.setText(state.description)
         }
 
-        binding.dateEditText.setText(state.date.toString())
-        binding.timeEditText.setText(state.time.toString())
+        if (binding.dateEditText.text.toString() != state.date?.toString()) {
+            val dateToSee = state.date?.let { date ->
+                val monthName = date.month.getDisplayName(TextStyle.FULL, Locale("ru"))
+                "${date.dayOfMonth} $monthName ${date.year} г."
+            } ?: ""
+
+            binding.dateEditText.setText(dateToSee)
+        }
+
+        val formattedTime = state.time?.let { time ->
+            String.format("%02d:%02d", time.hour, time.minute)
+        } ?: ""
+
+        if (binding.timeEditText.text.toString() != formattedTime) {
+            binding.timeEditText.setText(formattedTime)
+        }
 
         binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
         binding.saveButton.isEnabled = !state.isLoading
@@ -110,7 +125,10 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
         if (state.saveSuccessful) {
             findNavController().popBackStack()
         }
-        // TODO: Обработка ошибки (state.isError)
+
+        if (state.isError) {
+            Toast.makeText(requireContext(), state.erorrDescrip, Toast.LENGTH_SHORT).show()
+        }
 
     }
 
@@ -191,7 +209,9 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private fun setMaterialPickers() {
         binding.dateEditText.setOnClickListener {
-            val datePicker = MaterialDatePicker.Builder.datePicker()
+            val datePicker = MaterialDatePicker
+                .Builder
+                .datePicker()
                 .setTitleText("Выберите дату")
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                 .build()
@@ -205,7 +225,8 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
 
         binding.timeEditText.setOnClickListener {
-            val timePicker = MaterialTimePicker.Builder()
+            val timePicker = MaterialTimePicker
+                .Builder()
                 .setTimeFormat(TimeFormat.CLOCK_24H)
                 .setTitleText("Выберите время")
                 .build()

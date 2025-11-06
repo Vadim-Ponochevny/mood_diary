@@ -1,7 +1,6 @@
 package com.example.mood_diary.ui.entries
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -22,7 +21,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mood_diary.R
 import com.example.mood_diary.data.model.Entry
-import com.example.mood_diary.data.model.Mood
 import com.example.mood_diary.databinding.FragmentEntriesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
