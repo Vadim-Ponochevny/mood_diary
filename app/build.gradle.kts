@@ -84,6 +84,7 @@ dependencies {
     implementation (libs.glide)
     // refresh
     implementation(libs.androidx.swiperefreshlayout)
-    // safe args
-//    implementation(libs.androidx.navigation.safe.args.gradle.plugin)
+    // stat
+    implementation(libs.mpandroidchart)
+
 }

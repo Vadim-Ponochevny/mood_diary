@@ -44,7 +44,6 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
 
-
             <Spinner
                 android:id="@+id/tagSpinner"
                 android:layout_width="match_parent"
@@ -121,7 +120,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 2. ProgressBar, расположенный по центру, поверх всего контента -->
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"

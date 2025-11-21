@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
-import org.threeten.bp.format.TextStyle
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel

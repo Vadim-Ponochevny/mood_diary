@@ -12,6 +12,7 @@ kotlinxSerializationJson = "1.7.3"
 material = "1.13.0"
 activity = "1.11.0"
 constraintlayout = "2.2.1"
+mpandroidchart = "v3.1.0"
 navigationFragmentKtx = "2.9.5"
 navigationUiKtx = "2.9.5"
 roomKtx = "2.8.1"
@@ -41,6 +42,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 threetenabp = { module = "com.jakewharton.threetenabp:threetenabp", version.ref = "threetenabp" }
 
 [plugins]

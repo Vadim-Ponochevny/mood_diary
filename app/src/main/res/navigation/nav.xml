@@ -26,6 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/moodStatsFragment"
-        android:name="com.example.mood_diary.MoodStatsFragment"
-        android:label="MoodStatsFragment" />
+        android:name="com.example.mood_diary.ui.stats.MoodStatsFragment"
+        android:label="MoodStatsFragment" >
+    </fragment>
 </navigation>
