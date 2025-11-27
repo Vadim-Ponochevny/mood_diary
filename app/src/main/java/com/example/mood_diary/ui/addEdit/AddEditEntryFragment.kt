@@ -98,6 +98,10 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private fun render(state: AddEditEntryViewModel.ViewState) {
         showMoodSelector(state.moods)
 
+        binding.tagSpinner.setSelection(
+            getTagPosition(state.tag)
+        )
+
         if (binding.descriptionEditText.text.toString() != state.description) {
             binding.descriptionEditText.setText(state.description)
         }
@@ -130,6 +134,16 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
             Toast.makeText(requireContext(), state.erorrDescrip, Toast.LENGTH_SHORT).show()
         }
 
+    }
+
+    private fun getTagPosition(tagName: String): Int {
+        val tagsArray: Array<String> = resources.getStringArray(R.array.tags_array)
+
+        val tagsList: List<String> = tagsArray.toList()
+
+        val position: Int = tagsList.indexOf(tagName)
+
+        return position
     }
 
     private fun setupListeners() {

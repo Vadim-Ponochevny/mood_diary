@@ -25,6 +25,7 @@ class EntriesViewModel @Inject constructor(
         val entries: List<Entry> = emptyList(),
         val filteredEntries: List<Entry> = emptyList(),
         val searchQuery: String = "",
+        val isSearchExpanded: Boolean = false,
         val moods: List<MoodFilterItem> = Mood.entries.map {
             MoodFilterItem(mood = it, isSelected = false)
         },
@@ -34,6 +35,7 @@ class EntriesViewModel @Inject constructor(
         sealed class Intents {
             data object LoadEntries : Intents()
             data class SearchEntries(val query: String) : Intents()
+            data class SetSearchExpanded(val open: Boolean) : Intents()
             data class OnMoodClicked(val mood: Mood) : Intents()
             data class FilterByMood(val filterMood: Mood) : Intents()
             data class DeleteEntry(val entry: Entry) : Intents()
@@ -43,6 +45,7 @@ class EntriesViewModel @Inject constructor(
         sealed class StateTriggers {
             data object LoadEntries : StateTriggers()
             data class SearchChanged(val query: String) : StateTriggers()
+            data class SetSearchExpanded(val open: Boolean) : StateTriggers()
             data class FilterChanged(val filterMood: Mood) : StateTriggers()
             data class DeleteEntry(val entry: Entry) : StateTriggers()
             data object ClearFilters : StateTriggers()
@@ -62,6 +65,10 @@ class EntriesViewModel @Inject constructor(
                 }
                 is ViewState.StateTriggers.SearchChanged -> {
                     val newState = currentState.copy(searchQuery = trigger.query)
+                    emit(applyFiltersAndSearch(newState))
+                }
+                is ViewState.StateTriggers.SetSearchExpanded -> {
+                    val newState = currentState.copy(isSearchExpanded = trigger.open)
                     emit(applyFiltersAndSearch(newState))
                 }
                 is ViewState.StateTriggers.FilterChanged -> {
@@ -149,6 +156,12 @@ class EntriesViewModel @Inject constructor(
             is ViewState.Intents.SearchEntries -> {
                 viewModelScope.launch {
                     refreshListener.emit(ViewState.StateTriggers.SearchChanged(intent.query))
+                }
+            }
+
+            is ViewState.Intents.SetSearchExpanded -> {
+                viewModelScope.launch {
+                    refreshListener.emit(ViewState.StateTriggers.SetSearchExpanded(intent.open))
                 }
             }
 

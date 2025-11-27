@@ -4,35 +4,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.stats.MoodStatsFragment">
+    android:padding="16dp"
+    tools:context=".ui.stats.MoodStatsFragment"
+    android:background="@color/colorBack">
 
     <TextView
         android:id="@+id/dateRangeTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent "/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
-
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barChart"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/chartCardView"
         android:layout_width="0dp"
         android:layout_height="300dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        app:cardCornerRadius="12dp"
+        app:strokeWidth="0dp"
+        android:layout_margin="10dp"
+        app:cardBackgroundColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/dateRangeTextView">
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/statsTitleTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="Статистика эмоций"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chartCardView" />
 
     <TextView
         android:id="@+id/emotionStatsTextView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Общая статистика по эмоциям:"
-        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:padding="12dp"
+        android:lineSpacingExtra="4dp"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barChart" />
+        app:layout_constraintTop_toBottomOf="@id/statsTitleTextView"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,9 +25,9 @@ enum class Mood(
     val labelRes: Int,
     val value: Int
 ) {
-    SAD(R.drawable._icon_sad , R.string.mood_sad, 1),
+    HAPPY(R.drawable._icon_happy_smile, R.string.mood_happy, 1),
     NEUTRAL(R.drawable._icon_neutral, R.string.mood_neutral, 2),
-    HAPPY(R.drawable._icon_happy_smile, R.string.mood_happy, 3),
+    SAD(R.drawable._icon_sad, R.string.mood_sad, 3),
     ANGRY(R.drawable._icon_angry, R.string.mood_angry, 4);
 
     companion object {

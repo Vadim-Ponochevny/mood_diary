@@ -1,15 +1,22 @@
 package com.example.mood_diary
 
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.appcompat.widget.SearchView
+
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.example.mood_diary.ui.entries.EntriesFragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint

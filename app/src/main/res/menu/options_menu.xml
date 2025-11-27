@@ -2,9 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/search"
+        android:id="@+id/searchV"
         android:title="@string/search_title"
+        android:layout_width="match_parent"
+        android:hint="Введите запрос"
+        android:textColorHint="@color/white"
         android:icon="@drawable/ic_search"
-        app:showAsAction="ifRoom|collapseActionView"
+        app:showAsAction="always|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 </menu>

@@ -12,7 +12,7 @@
     <string name="search_title">Поиск</string>
 
     <string-array name="tags_array">
-        <item>Счастье</item>
+        <item>Нейтрально</item>
         <item>Волнение</item>
         <item>Благодарность</item>
         <item>Удовлетворение</item>
@@ -21,5 +21,6 @@
         <item>Стресс</item>
         <item>Грусть</item>
         <item>Отчаяние</item>
+        <item>Радость</item>
     </string-array>
 </resources>
