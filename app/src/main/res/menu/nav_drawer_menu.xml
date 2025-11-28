@@ -3,9 +3,9 @@
     <item
         android:id="@+id/entriesFragment"
         android:icon="@drawable/ic_entries"
-        android:title="Мои записи" />
+        android:title="@string/name_of_entriesFragment" />
     <item
         android:id="@+id/moodStatsFragment"
         android:icon="@drawable/ic_statistic"
-        android:title="Статистика" />
+        android:title="@string/name_of_moodStatsFragment" />
 </menu>

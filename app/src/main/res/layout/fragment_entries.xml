@@ -79,7 +79,7 @@
         app:tint="@android:color/white"
         app:backgroundTint="@color/colorPrimary"
         app:maxImageSize="32dp"
-        android:contentDescription="add"
+        android:contentDescription="@string/fragment_entries_addButtonDescription"
         app:shapeAppearanceOverlay="@style/FabShape"
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp" />

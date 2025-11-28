@@ -9,8 +9,27 @@
     <string name="mood_happy">Радостно</string>
     <string name="mood_angry">Разгенванно</string>
 
+    <!-- Текст с экранов -->
     <string name="search_title">Поиск</string>
+    <string name="fragment_entries_addButtonDescription">Добавить</string>
+    <string name="fragment_entry_edit_labelEmotions">Как вы себя чувствуете?</string>
+    <string name="fragment_entry_edit_labelTag">Выберите настроение</string>
+    <string name="fragment_entry_edit_labelDescription">Опишитие ваши эмоции</string>
+    <string name="fragment_entry_edit_descriptionEditText">Что у вас на душе?</string>
+    <string name="fragment_entry_edit_labelData">Дата, время</string>
+    <string name="fragment_entry_edit_dataEditText">Дата</string>
+    <string name="fragment_entry_edit_timeEditText">Время</string>
+    <string name="fragment_entry_edit_saveButton">Сохранить</string>
+    <string name="fragment_mood_stats_statsTitleTextView">Статистика эмоций</string>
+    <string name="fragment_mood_stats_emotionStatsTextView">Общее количсетво:</string>
+    <string name="fragment_mood_stats_emotionStatsTextView_nodata">Нет данных за период</string>
+    <string name="item_mood_filter_moodIcon">название_эмоции</string>
+    <string name="name_of_App_in_drawer">Дневник настроения</string>
+    <string name="name_of_entriesFragment">Мои записи</string>
+    <string name="name_of_moodStatsFragment">Статистика</string>
+    <string name="searchView_textHint">Введите запрос</string>
 
+    <!-- Теги -->
     <string-array name="tags_array">
         <item>Нейтрально</item>
         <item>Волнение</item>

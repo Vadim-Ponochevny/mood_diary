@@ -16,10 +16,10 @@ import java.util.Locale
 
 class MoodChartConfigurator(private val context: Context) {
     private val moodLabels = mapOf(
-        1f to context.getString(R.string.mood_happy),
-        2f to context.getString(R.string.mood_neutral),
-        3f to context.getString(R.string.mood_sad),
-        4f to context.getString(R.string.mood_angry)
+        1f to context.getString(R.string.mood_angry),
+        2f to context.getString(R.string.mood_sad),
+        3f to context.getString(R.string.mood_neutral),
+        4f to context.getString(R.string.mood_happy)
     )
 
     fun configureChart(chart: BarChart, data: List<BarEntry>) {

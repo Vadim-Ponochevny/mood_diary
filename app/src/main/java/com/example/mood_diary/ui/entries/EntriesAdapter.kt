@@ -37,15 +37,6 @@ class EntriesAdapter(
                 onEntryClick.invoke(item.id)
             }
 
-//            val colorRes = when(item.mood) {
-//                Mood.SAD -> R.color.sad
-//                Mood.NEUTRAL -> R.color.neutral
-//                Mood.HAPPY -> R.color.happy
-//                Mood.ANGRY -> R.color.angry
-//            }
-//
-//            val colorInt = ContextCompat.getColor(binding.root.context, colorRes)
-//            binding.root.setCardBackgroundColor(colorInt)
         }
     }
 

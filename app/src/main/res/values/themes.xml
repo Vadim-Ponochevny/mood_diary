@@ -5,7 +5,6 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:fitsSystemWindows">true</item>
-        <item name="searchViewStyle">@style/NoSearchIconSearchView</item>
     </style>
 
     <style name="Theme.Mood_diary" parent="Theme.Material3.Light.NoActionBar">
@@ -15,35 +14,6 @@
     <style name="FabShape" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
-    </style>
-
-    <style name="CustomToolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:layout_height">?attr/actionBarSize</item>
-        <item name="tint">@android:color/white</item>
-
-    </style>
-
-
-    <style name="AppTheme.SearchView" parent="">
-        <item name="android:textColorPrimary">@android:color/white</item>
-
-        <item name="android:textColorHint">#7A7F80</item>
-
-        <item name="colorControlNormal">@android:color/white</item>
-    </style>
-
-    <style name="NoSearchIconSearchView" parent="Widget.AppCompat.SearchView">
-        <item name="searchHintIcon">@null</item>
-
-        <item name="queryBackground">@android:color/transparent</item>
-    </style>
-
-    <style name="SearchViewTheme" parent="ThemeOverlay.Material3.Dark.ActionBar">
-        <item name="colorControlNormal">@color/white</item>
-        <item name="colorControlHighlight">@color/white</item>
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorHint">@color/white</item>
-        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>

@@ -26,11 +26,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
-import com.example.mood_diary.databinding.FragmentEntryEditBinding
 import com.example.mood_diary.ui.common.FilterAdapter
 import com.example.mood_diary.ui.common.MoodFilterItem
 import com.example.mood_diary.ui.entries.EntriesViewModel.ViewState.Intents
-
 
 @AndroidEntryPoint
 class EntriesFragment : Fragment(), MenuProvider {
@@ -70,8 +68,6 @@ class EntriesFragment : Fragment(), MenuProvider {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        requireActivity().invalidateOptionsMenu()
-
 
         setTitleForFragment()
 
@@ -163,7 +159,6 @@ class EntriesFragment : Fragment(), MenuProvider {
         }
     }
 
-
     private fun updateUI(state: EntriesViewModel.ViewState) {
         lastState = state
 
@@ -236,7 +231,6 @@ class EntriesFragment : Fragment(), MenuProvider {
             findNavController().navigate(action)
         }
     }
-
 
     private fun showDeleteDialog(entry: Entry, position: Int) {
         AlertDialog.Builder(requireContext())

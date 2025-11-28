@@ -5,7 +5,7 @@
         android:id="@+id/searchV"
         android:title="@string/search_title"
         android:layout_width="match_parent"
-        android:hint="Введите запрос"
+        android:hint="@string/searchView_textHint"
         android:textColorHint="@color/white"
         android:icon="@drawable/ic_search"
         app:showAsAction="always|collapseActionView"

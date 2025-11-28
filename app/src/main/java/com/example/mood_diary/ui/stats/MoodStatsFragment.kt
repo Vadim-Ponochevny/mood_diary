@@ -37,13 +37,13 @@ class MoodStatsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupToolbar()
+        setTitleForFragment()
         initializeFormatters()
         observeViewState()
         loadStatistics()
     }
 
-    private fun setupToolbar() {
+    private fun setTitleForFragment() {
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Статистика"
     }
 

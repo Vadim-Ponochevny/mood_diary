@@ -8,7 +8,6 @@ class ZeroValueFormatter : ValueFormatter() {
         return if (barEntry?.y == 0f) "" else barEntry?.y?.toInt().toString()
     }
 
-    // Также можно добавить для оси значений
     override fun getFormattedValue(value: Float): String {
         return if (value == 0f) "" else value.toInt().toString()
     }
