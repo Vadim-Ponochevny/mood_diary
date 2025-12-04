@@ -19,8 +19,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
 
     private val requestPermissionLauncher =
@@ -47,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
 
-        appBarConfiguration = AppBarConfiguration(
+        val appBarConfiguration = AppBarConfiguration(
             setOf(R.id.entriesFragment, R.id.moodStatsFragment),
             drawer
         )
@@ -74,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        return navController.navigateUp() || super.onSupportNavigateUp()
+//    }
 }

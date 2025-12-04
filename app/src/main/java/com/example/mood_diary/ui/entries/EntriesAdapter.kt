@@ -6,25 +6,46 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mood_diary.ui.entries.EntriesAdapter.ViewHolder
-import com.example.mood_diary.data.model.Entry
+import com.example.mood_diary.domain.model.DomainEntry
 import com.example.mood_diary.databinding.ItemMoodEntryBinding
 import org.threeten.bp.format.TextStyle
 import java.util.Locale
 import com.bumptech.glide.Glide
+import com.example.mood_diary.R
+import org.threeten.bp.LocalDate
 
 class EntriesAdapter(
-) : ListAdapter<Entry, ViewHolder>(EntryDiffCallback()) {
+
+) : ListAdapter<DomainEntry, ViewHolder>(EntryDiffCallback()) {
 
     var onEntryClick: ((Int) -> Unit) = {}
 
     inner class ViewHolder(
         val binding: ItemMoodEntryBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind (item: Entry) {
-            val dateTimeText = "${item.date.dayOfMonth} " +
-                    "${item.date.month.getDisplayName(TextStyle.FULL, Locale("ru"))} " +
-                    "${item.date.year} г. " +
-                    item.time.toString().substring(0, 5)
+        fun bind (item: DomainEntry) {
+
+            val context = itemView.context
+
+            val date = LocalDate.parse(item.date)
+
+            val formattedDate = context.getString(
+                R.string.entry_date_format_long,
+                date.dayOfMonth,
+                date.month.getDisplayName(
+                    TextStyle.FULL,
+                    Locale.forLanguageTag("ru")
+                ),
+                date.year
+            )
+
+            val formattedTime = item.time.take(5)
+
+            val dateTimeText = context.getString(
+                R.string.entry_date_time_format,
+                formattedDate,
+                formattedTime
+            )
 
             Glide.with(binding.root.context)
                 .load(item.mood.emoji)
@@ -58,18 +79,18 @@ class EntriesAdapter(
     }
 }
 
-class EntryDiffCallback : DiffUtil.ItemCallback<Entry>() {
+class EntryDiffCallback : DiffUtil.ItemCallback<DomainEntry>() {
 
     override fun areItemsTheSame(
-        oldItemPosition: Entry,
-        newItemPosition: Entry
+        oldItemPosition: DomainEntry,
+        newItemPosition: DomainEntry
     ): Boolean {
         return oldItemPosition.id == newItemPosition.id
     }
 
     override fun areContentsTheSame(
-        oldItemPosition: Entry,
-        newItemPosition: Entry
+        oldItemPosition: DomainEntry,
+        newItemPosition: DomainEntry
     ): Boolean {
         return oldItemPosition == newItemPosition
     }

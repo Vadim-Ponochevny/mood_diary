@@ -23,11 +23,17 @@
     <string name="fragment_mood_stats_statsTitleTextView">Статистика эмоций</string>
     <string name="fragment_mood_stats_emotionStatsTextView">Общее количсетво:</string>
     <string name="fragment_mood_stats_emotionStatsTextView_nodata">Нет данных за период</string>
+    <string name="fragment_mood_stats_nodata">Записей для статистики пока нет</string>
     <string name="item_mood_filter_moodIcon">название_эмоции</string>
     <string name="name_of_App_in_drawer">Дневник настроения</string>
     <string name="name_of_entriesFragment">Мои записи</string>
     <string name="name_of_moodStatsFragment">Статистика</string>
     <string name="searchView_textHint">Введите запрос</string>
+
+    <string name="entry_date_format_long">%1$d %2$s %3$d</string>
+
+    <string name="entry_date_time_format">%1$s г. %2$s</string>
+
 
     <!-- Теги -->
     <string-array name="tags_array">

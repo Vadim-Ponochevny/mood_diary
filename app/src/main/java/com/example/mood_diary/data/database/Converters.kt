@@ -15,23 +15,23 @@ class Converters {
         return Mood.fromValue(value)
     }
 
-    @TypeConverter
-    fun fromLocalDate(date: LocalDate): String {
-        return date.toString()
-    }
-
-    @TypeConverter
-    fun toLocalDate(value: String): LocalDate {
-        return LocalDate.parse(value)
-    }
-
-    @TypeConverter
-    fun fromLocalTime(dateTime: LocalTime): String {
-        return dateTime.toString()
-    }
-
-    @TypeConverter
-    fun toLocalTime(value: String): LocalTime {
-        return LocalTime.parse(value)
-    }
+//    @TypeConverter
+//    fun fromLocalDate(date: LocalDate): String {
+//        return date.toString()
+//    }
+//
+//    @TypeConverter
+//    fun toLocalDate(value: String): LocalDate {
+//        return LocalDate.parse(value)
+//    }
+//
+//    @TypeConverter
+//    fun fromLocalTime(dateTime: LocalTime): String {
+//        return dateTime.toString()
+//    }
+//
+//    @TypeConverter
+//    fun toLocalTime(value: String): LocalTime {
+//        return LocalTime.parse(value)
+//    }
 }

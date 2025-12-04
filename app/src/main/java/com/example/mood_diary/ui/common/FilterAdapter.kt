@@ -6,16 +6,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.mood_diary.data.model.Mood
+import com.example.mood_diary.domain.model.Mood
 import com.example.mood_diary.databinding.ItemMoodFilterBinding
 import com.example.mood_diary.ui.common.FilterAdapter.ViewHolder
 import androidx.core.content.ContextCompat
 import com.example.mood_diary.R
 
 class FilterAdapter(
+//    private val onMoodClick: (Mood) -> Unit
 ) : ListAdapter<MoodFilterItem, ViewHolder>(MoodFilterItemDiffCallback()) {
 
-    var onMoodClick: ((Mood) -> Unit)? = null
+      var onMoodClick: ((Mood) -> Unit)? = null
 
     inner class ViewHolder(
         private val binding: ItemMoodFilterBinding,

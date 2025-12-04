@@ -20,7 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mood_diary.R
-import com.example.mood_diary.data.model.Entry
+import com.example.mood_diary.domain.model.DomainEntry
 import com.example.mood_diary.databinding.FragmentEntriesBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -178,7 +178,7 @@ class EntriesFragment : Fragment(), MenuProvider {
         showEntries(state.filteredEntries)
     }
 
-    private fun showEntries(entries: List<Entry>) {
+    private fun showEntries(entries: List<DomainEntry>) {
         entriesAdapter.submitList(entries)
     }
 
@@ -187,19 +187,23 @@ class EntriesFragment : Fragment(), MenuProvider {
     }
 
     private fun setEntriesRView() {
-        binding.emojiRecyclerView.setHasFixedSize(true)
-        binding.emojiRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.emojiRecyclerView.adapter = entriesAdapter
+        binding.emojiRecyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = entriesAdapter
+        }
     }
 
     private fun setMoodFilterRView() {
-        binding.moodFilterRecyclerView.setHasFixedSize(true)
-        binding.moodFilterRecyclerView.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL,
-            false
-        )
-        binding.moodFilterRecyclerView.adapter = moodFilterAdapter
+        binding.moodFilterRecyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
+            adapter = moodFilterAdapter
+        }
     }
 
     private fun setupClicks() {
@@ -232,12 +236,12 @@ class EntriesFragment : Fragment(), MenuProvider {
         }
     }
 
-    private fun showDeleteDialog(entry: Entry, position: Int) {
+    private fun showDeleteDialog(dataEntry: DomainEntry, position: Int) {
         AlertDialog.Builder(requireContext())
             .setTitle("Удаление записи")
             .setMessage("Вы точно хотите удалить запись?")
             .setPositiveButton("Да") { _, _ ->
-                viewModel.onIntent(Intents.DeleteEntry(entry))
+                viewModel.onIntent(Intents.DeleteEntry(dataEntry))
             }
             .setNegativeButton("Нет") { dialog, _ ->
                 entriesAdapter.notifyItemChanged(position)

@@ -4,8 +4,8 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.Locale
 
-class DateRangeFormatter(private val locale: Locale) {
-    fun getDateRangeText(): String {
+object DateRangeFormatter {
+    fun getDateRangeText(locale: Locale): String {
         val today = LocalDate.now()
         val startDate = today.minusDays(6)
         val formatter = DateTimeFormatter.ofPattern("d MMM", locale)

@@ -101,8 +101,8 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         updateTextIfChanged(binding.descriptionEditText, state.description)
 
-        updateTextIfChanged(binding.dateEditText, state.date?.let { formatDate(it) } ?: "")
-        updateTextIfChanged(binding.timeEditText, state.time?.let { formatTime(it) } ?: "")
+        updateTextIfChanged(binding.dateEditText, state.date ?: "")
+        updateTextIfChanged(binding.timeEditText, state.time ?: "")
 
         binding.progressBar.isVisible = state.isLoading
         binding.saveButton.isEnabled = !state.isLoading
@@ -197,12 +197,14 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
             MaterialDatePicker.Builder.datePicker()
                 .setTitleText("Выберите дату")
                 .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                .build().apply {
+                .build()
+                .apply {
                     addOnPositiveButtonClickListener { millis ->
                         val date = Instant.ofEpochMilli(millis)
                             .atZone(ZoneId.systemDefault())
                             .toLocalDate()
-                        viewModel.onIntent(AddEditEntryViewModel.Intents.UpdateDate(date))
+
+                        viewModel.onIntent(AddEditEntryViewModel.Intents.UpdateDate(date.toString()))
                     }
                 }.show(parentFragmentManager, "DATE_PICKER")
         }
@@ -214,7 +216,7 @@ class AddEditEntryFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 .build().apply {
                     addOnPositiveButtonClickListener {
                         val time = LocalTime.of(hour, minute)
-                        viewModel.onIntent(AddEditEntryViewModel.Intents.UpdateTime(time))
+                        viewModel.onIntent(AddEditEntryViewModel.Intents.UpdateTime(time.toString()))
                     }
                 }.show(parentFragmentManager, "TIME_PICKER")
         }

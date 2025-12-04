@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.mood_diary.data.model.Mood
+import com.example.mood_diary.domain.model.Mood
 import com.example.mood_diary.databinding.FragmentMoodStatsBinding
 import com.example.mood_diary.ui.stats.components.formatters.DateRangeFormatter
 import com.example.mood_diary.ui.stats.components.formatters.EmotionStatsFormatter
@@ -26,10 +26,6 @@ class MoodStatsFragment : Fragment() {
     private var _binding: FragmentMoodStatsBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var chartConfigurator: MoodChartConfigurator
-    private lateinit var statsFormatter: EmotionStatsFormatter
-    private lateinit var dateRangeFormatter: DateRangeFormatter
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMoodStatsBinding.inflate(inflater, container, false)
         return binding.root
@@ -38,7 +34,6 @@ class MoodStatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setTitleForFragment()
-        initializeFormatters()
         observeViewState()
         loadStatistics()
     }
@@ -47,14 +42,8 @@ class MoodStatsFragment : Fragment() {
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Статистика"
     }
 
-    private fun initializeFormatters() {
-        chartConfigurator = MoodChartConfigurator(requireContext())
-        statsFormatter = EmotionStatsFormatter(requireContext())
-        dateRangeFormatter = DateRangeFormatter(Locale("ru"))
-    }
-
     private fun loadStatistics() {
-        viewModel.onIntent(MoodStatsViewModel.Intents.LoadStatistics)
+        viewModel.onIntent(MoodStatsViewModel.MoodStatsIntents.LoadStatistics)
     }
 
     private fun observeViewState() {
@@ -67,7 +56,7 @@ class MoodStatsFragment : Fragment() {
         }
     }
 
-    private fun handleState(state: MoodStatsViewModel.ViewState) {
+    private fun handleState(state: MoodStatsState) {
         when {
             state.isLoading -> showLoading()
             state.error != null -> showError(state.error)
@@ -84,22 +73,22 @@ class MoodStatsFragment : Fragment() {
         binding.barChart.clear()
     }
 
-    private fun showData(state: MoodStatsViewModel.ViewState) {
+    private fun showData(state: MoodStatsState) {
         displayDateRange()
         setupChart(state.chartData)
         displayEmotionStats(state.emotionStats)
     }
 
     private fun displayDateRange() {
-        binding.dateRangeTextView.text = dateRangeFormatter.getDateRangeText()
+        binding.dateRangeTextView.text = DateRangeFormatter.getDateRangeText(Locale.forLanguageTag("ru"))
     }
 
     private fun setupChart(data: List<BarEntry>) {
-        chartConfigurator.configureChart(binding.barChart, data)
+        MoodChartConfigurator.configureChart(binding.barChart, data, requireContext())
     }
 
     private fun displayEmotionStats(stats: Map<Mood, Int>) {
-        binding.emotionStatsTextView.text = statsFormatter.format(stats)
+        binding.emotionStatsTextView.text = EmotionStatsFormatter.format(stats, requireContext())
     }
 
     override fun onDestroyView() {

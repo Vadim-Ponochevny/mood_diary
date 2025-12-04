@@ -2,9 +2,9 @@ package com.example.mood_diary.ui.entries
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mood_diary.data.model.Entry
-import com.example.mood_diary.data.model.Mood
-import com.example.mood_diary.domain.EntryRepository
+import com.example.mood_diary.domain.model.Mood
+import com.example.mood_diary.domain.model.DomainEntry
+import com.example.mood_diary.domain.repository.EntryRepository
 import com.example.mood_diary.ui.base.IntentAware
 import com.example.mood_diary.ui.common.MoodFilterItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,8 +22,8 @@ class EntriesViewModel @Inject constructor(
     data class ViewState(
         val isLoading: Boolean = false,
         val isError: Boolean = false,
-        val entries: List<Entry> = emptyList(),
-        val filteredEntries: List<Entry> = emptyList(),
+        val entries: List<DomainEntry> = emptyList(),
+        val filteredEntries: List<DomainEntry> = emptyList(),
         val searchQuery: String = "",
         val isSearchExpanded: Boolean = false,
         val moods: List<MoodFilterItem> = Mood.entries.map {
@@ -38,7 +38,7 @@ class EntriesViewModel @Inject constructor(
             data class SetSearchExpanded(val open: Boolean) : Intents()
             data class OnMoodClicked(val mood: Mood) : Intents()
             data class FilterByMood(val filterMood: Mood) : Intents()
-            data class DeleteEntry(val entry: Entry) : Intents()
+            data class DeleteEntry(val dataEntry: DomainEntry) : Intents()
             data object ClearFilters : Intents()
         }
 
@@ -47,7 +47,7 @@ class EntriesViewModel @Inject constructor(
             data class SearchChanged(val query: String) : StateTriggers()
             data class SetSearchExpanded(val open: Boolean) : StateTriggers()
             data class FilterChanged(val filterMood: Mood) : StateTriggers()
-            data class DeleteEntry(val entry: Entry) : StateTriggers()
+            data class DeleteEntry(val dataEntry: DomainEntry) : StateTriggers()
             data object ClearFilters : StateTriggers()
         }
     }
@@ -76,7 +76,7 @@ class EntriesViewModel @Inject constructor(
                     emit(applyFiltersAndSearch(newState))
                 }
                 is ViewState.StateTriggers.DeleteEntry -> {
-                    deleteEntry(trigger.entry)
+                    deleteEntry(trigger.dataEntry)
                     emit(updateCurrentEntries())
                 }
                 ViewState.StateTriggers.ClearFilters -> {
@@ -109,9 +109,9 @@ class EntriesViewModel @Inject constructor(
         }
     }
 
-    private suspend fun deleteEntry(entry: Entry) {
+    private suspend fun deleteEntry(dataEntry: DomainEntry) {
         try {
-            repository.deleteEntryDatabase(entry)
+            repository.deleteEntryDatabase(dataEntry)
         } catch (e: Exception) {
         }
     }
@@ -183,7 +183,7 @@ class EntriesViewModel @Inject constructor(
 
             is ViewState.Intents.DeleteEntry -> {
                 viewModelScope.launch {
-                    refreshListener.emit(ViewState.StateTriggers.DeleteEntry(intent.entry))
+                    refreshListener.emit(ViewState.StateTriggers.DeleteEntry(intent.dataEntry))
                 }
             }
 

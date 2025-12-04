@@ -3,10 +3,10 @@ package com.example.mood_diary.ui.stats.components.formatters
 import android.content.Context
 import androidx.core.content.ContextCompat.getString
 import com.example.mood_diary.R
-import com.example.mood_diary.data.model.Mood
+import com.example.mood_diary.domain.model.Mood
 
-class EmotionStatsFormatter(private val context: Context) {
-    fun format(stats: Map<Mood, Int>): String {
+object EmotionStatsFormatter {
+    fun format(stats: Map<Mood, Int>, context: Context): String {
         if (stats.isEmpty())
             return R.string.fragment_mood_stats_emotionStatsTextView_nodata.toString()
 
@@ -17,12 +17,12 @@ class EmotionStatsFormatter(private val context: Context) {
         stats.entries
             .sortedByDescending { it.value }
             .forEach { (mood, count) ->
-                sb.append(formatMoodEntry(mood, count))
+                sb.append(formatMoodEntry(mood, count, context))
             }
         return sb.toString()
     }
 
-    private fun formatMoodEntry(mood: Mood, count: Int): String {
+    private fun formatMoodEntry(mood: Mood, count: Int, context: Context): String {
         val moodName = context.getString(mood.labelRes)
         return "$moodName: $count \n"
     }

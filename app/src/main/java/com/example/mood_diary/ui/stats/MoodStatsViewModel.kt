@@ -2,10 +2,9 @@ package com.example.mood_diary.ui.stats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mood_diary.data.model.Entry
-import com.example.mood_diary.data.model.Mood
-import com.example.mood_diary.domain.EntryRepository
-import com.example.mood_diary.ui.addEdit.AddEditEntryViewModel
+import com.example.mood_diary.domain.model.DomainEntry
+import com.example.mood_diary.domain.model.Mood
+import com.example.mood_diary.domain.repository.EntryRepository
 import com.example.mood_diary.ui.base.IntentAware
 import com.github.mikephil.charting.data.BarEntry
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,27 +18,26 @@ import javax.inject.Inject
 @HiltViewModel
 class MoodStatsViewModel @Inject constructor(
     private val entryRepository: EntryRepository
-) : ViewModel(), IntentAware<MoodStatsViewModel.Intents> {
+) : ViewModel(), IntentAware<MoodStatsViewModel.MoodStatsIntents> {
 
-    data class ViewState(
-        val isLoading: Boolean = true,
-        val entries: List<Entry> = emptyList(),
-        val chartData: List<BarEntry> = emptyList(),
-        val emotionStats: Map<Mood, Int> = emptyMap(),
-        val error: String? = null
-    )
-
-    sealed class Intents {
-        data object LoadStatistics: Intents()
+    private companion object {
+        private const val STATS_RANGE_DAYS = 7
+        private const val DAYS_OFFSET_FROM_TODAY = STATS_RANGE_DAYS - 1
+        private const val CHART_START_INDEX = 0
+        private const val CHART_END_INDEX = DAYS_OFFSET_FROM_TODAY
+        private const val DEFAULT_MOOD_VALUE_FLOAT = 0f
     }
 
-    private val _viewState = MutableStateFlow(ViewState())
+    sealed class MoodStatsIntents {
+        data object LoadStatistics: MoodStatsIntents()
+    }
+
+    private val _viewState = MutableStateFlow(MoodStatsState())
     val viewState = _viewState.asStateFlow()
 
-
-    override fun onIntent(intent: Intents) {
+    override fun onIntent(intent: MoodStatsIntents) {
         when (intent) {
-            is Intents.LoadStatistics -> loadStatistics()
+            is MoodStatsIntents.LoadStatistics -> loadStatistics()
         }
     }
 
@@ -69,29 +67,38 @@ class MoodStatsViewModel @Inject constructor(
         }
     }
 
-    private fun processEntriesForChart(entries: List<Entry>): List<BarEntry> {
+    private fun processEntriesForChart(entries: List<DomainEntry>): List<BarEntry> {
+
         val today = LocalDate.now()
+        val startOfChartRange = today.minusDays(DAYS_OFFSET_FROM_TODAY.toLong())
 
-        val dailyGroupedEntries = entries
-            .filter { entry ->
-                !entry.date.isBefore(today.minusDays(6))
-            }
-            .groupBy { it.date }
+        val recentEntries = entries.filter { entry ->
+            val entryDate = LocalDate.parse(entry.date)
 
-        val dailyAverageMood = dailyGroupedEntries.mapValues { (_, dailyEntries) ->
-            dailyEntries.map { it.mood.value.toDouble() }.average()
+            !entryDate.isBefore(startOfChartRange)
         }
 
-        return (0..6).map { i ->
-            val date = today.minusDays(6 - i.toLong())
+        val groupedByDate = recentEntries.groupBy { entry ->
+            LocalDate.parse(entry.date)
+        }
 
-            val moodValue = dailyAverageMood[date]?.toFloat() ?: 0f
+        val dailyAverageMood = groupedByDate.mapValues { (_, entriesForDay) ->
+            entriesForDay
+                .map { it.mood.value.toDouble() }
+                .average()
+        }
 
-            BarEntry(i.toFloat(), moodValue)
+        return (CHART_START_INDEX..CHART_END_INDEX).map { dayIndex ->
+
+            val chartDate = startOfChartRange.plusDays(dayIndex.toLong())
+
+            val averageMoodValue = dailyAverageMood[chartDate]?.toFloat() ?: DEFAULT_MOOD_VALUE_FLOAT
+
+            BarEntry(dayIndex.toFloat(), averageMoodValue)
         }
     }
 
-    private fun processEntriesForEmotionStats(entries: List<Entry>): Map<Mood, Int> {
+    private fun processEntriesForEmotionStats(entries: List<DomainEntry>): Map<Mood, Int> {
         return entries
             .groupBy { it.mood }
             .mapValues { (_, moodEntries) -> moodEntries.size }

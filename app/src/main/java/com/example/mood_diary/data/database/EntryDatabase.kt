@@ -3,11 +3,11 @@ package com.example.mood_diary.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.mood_diary.data.model.Entry
+import com.example.mood_diary.data.model.DataEntry
 
 
 @Database(
-    entities = [Entry::class],
+    entities = [DataEntry::class],
     version = 2,
     exportSchema = false
 )

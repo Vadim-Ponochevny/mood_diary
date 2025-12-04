@@ -3,11 +3,11 @@ package com.example.mood_diary.ui.entries
 import android.graphics.Canvas
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mood_diary.data.model.Entry
+import com.example.mood_diary.domain.model.DomainEntry
 
 class SwipeToDeleteEntryCallback (
     private val adapter: EntriesAdapter,
-    private val onDelete: (entry: Entry, position: Int) -> Unit
+    private val onDelete: (dataEntry: DomainEntry, position: Int) -> Unit
 ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
     override fun onMove(

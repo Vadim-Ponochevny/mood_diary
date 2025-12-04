@@ -2,9 +2,9 @@ package com.example.mood_diary.ui.addEdit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mood_diary.data.model.Entry
-import com.example.mood_diary.data.model.Mood
-import com.example.mood_diary.domain.EntryRepository
+import com.example.mood_diary.domain.model.DomainEntry
+import com.example.mood_diary.domain.model.Mood
+import com.example.mood_diary.domain.repository.EntryRepository
 import com.example.mood_diary.ui.base.IntentAware
 import com.example.mood_diary.ui.common.MoodFilterItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,8 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,8 +24,8 @@ class AddEditEntryViewModel @Inject constructor(
         val description: String = "",
         val tag: String = "",
         val selectedMood: Mood = Mood.NEUTRAL,
-        val date: LocalDate? = null,
-        val time: LocalTime? = null,
+        val date: String? = null,
+        val time: String? = null,
         val isLoading: Boolean = false,
         val saveSuccessful: Boolean = false,
         val isError: Boolean = false,
@@ -42,8 +40,8 @@ class AddEditEntryViewModel @Inject constructor(
         data class UpdateDescription(val text: String) : Intents()
         data class UpdateTag(val text: String) : Intents()
         data class UpdateMood(val mood: Mood) : Intents()
-        data class UpdateDate(val date: LocalDate) : Intents()
-        data class UpdateTime(val time: LocalTime) : Intents()
+        data class UpdateDate(val date: String) : Intents()
+        data class UpdateTime(val time: String) : Intents()
         data object SaveEntry : Intents()
     }
 
@@ -83,8 +81,8 @@ class AddEditEntryViewModel @Inject constructor(
                         entryId = founded.id,
                         description = founded.des,
                         tag = founded.teg,
-                        date = founded.date,
-                        time = founded.time,
+                        date = founded.date.toString(),
+                        time = founded.time.toString(),
                         selectedMood = founded.mood,
                         moods = updatedMoods,
                         isLoading = false
@@ -123,7 +121,7 @@ class AddEditEntryViewModel @Inject constructor(
         }
     }
 
-    private fun updateDate (date: LocalDate) {
+    private fun updateDate (date: String) {
         _viewState.update { state ->
             state.copy(
                 date = date
@@ -131,7 +129,7 @@ class AddEditEntryViewModel @Inject constructor(
         }
     }
 
-    private fun updateTime (time: LocalTime) {
+    private fun updateTime (time: String) {
         _viewState.update { state ->
             state.copy(
                 time = time,
@@ -142,10 +140,6 @@ class AddEditEntryViewModel @Inject constructor(
     private fun saveEntry() {
         viewModelScope.launch {
             val state = _viewState.value
-//            if (state.tag.isBlank()) {
-//                // Здесь можно установить флаг ошибки, если описание пустое
-//                return@launch
-//            }
 
             if (state.date == null || state.time == null ) {
                 _viewState.update { state ->
@@ -157,17 +151,17 @@ class AddEditEntryViewModel @Inject constructor(
                 return@launch
             }
 
-            val entryToSave = Entry(
+            val dataEntryToSave = DomainEntry(
                 id = state.entryId,
                 des = state.description,
                 teg = state.tag,
                 mood = state.selectedMood,
                 date = state.date,
-                time = state.time,
+                time = state.time
             )
 
             try {
-                repository.upsertEntryDatabase(entryToSave)
+                repository.upsertEntryDatabase(dataEntryToSave)
                 _viewState.update { it.copy(saveSuccessful = true, isError = false) }
             } catch (e: Exception) {
                 _viewState.update { it.copy(isError = true) }

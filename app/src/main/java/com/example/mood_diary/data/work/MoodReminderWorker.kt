@@ -36,7 +36,7 @@ class MoodReminderWorker @AssistedInject constructor(
         val notification = NotificationCompat.Builder(applicationContext, "mood_daily_reminder")
             .setContentTitle("Как прошёл ваш день?")
             .setContentText("Запишите все, что вы думаете!")
-            .setSmallIcon(R.drawable.icon_app)
+            .setSmallIcon(R.drawable.ic_app)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .build()
