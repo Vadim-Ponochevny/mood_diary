@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav"
+    app:startDestination="@id/entriesFragment">
+
+    <fragment
+        android:id="@+id/entriesFragment"
+        android:name="com.example.mood_diary.ui.entries.EntriesFragment"
+        android:label="Мои записи" >
+        <action
+            android:id="@+id/action_entriesFragment_to_entryEditFragment"
+            app:destination="@id/addEditEntryFragment" />
+        <action
+            android:id="@+id/action_entriesFragment_to_moodStatsFragment"
+            app:destination="@id/moodStatsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addEditEntryFragment"
+        android:name="com.example.mood_diary.ui.addEdit.AddEditEntryFragment"
+        android:label="Добавить запись" >
+        <argument
+            android:name="entryId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/moodStatsFragment"
+        android:name="com.example.mood_diary.ui.stats.MoodStatsFragment"
+        android:label="MoodStatsFragment" >
+    </fragment>
+</navigation>

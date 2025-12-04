@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="52dp"
+    android:layout_height="52dp"
+    android:layout_marginEnd="8dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/moodCard"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="2dp"
+        app:strokeWidth="2dp"
+        app:strokeColor="@android:color/transparent"
+        app:checkedIcon="@null"
+        app:rippleColor="?attr/colorControlHighlight"
+        app:cardBackgroundColor="@android:color/white">
+
+        <ImageView
+            android:id="@+id/moodIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="6dp"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/item_mood_filter_moodIcon" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/entriesFragment"
+        android:icon="@drawable/ic_entries"
+        android:title="@string/name_of_entriesFragment" />
+    <item
+        android:id="@+id/moodStatsFragment"
+        android:icon="@drawable/ic_statistic"
+        android:title="@string/name_of_moodStatsFragment" />
+</menu>
